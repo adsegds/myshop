@@ -710,6 +710,91 @@ const CATEGORIES = [
   let currentCategory = "all";
   let cart = [];
 
+
+
+
+
+
+
+
+// ホーム（横スクロール棚）を描画
+function renderHomeSections() {
+  homeSectionsEl.innerHTML = "";
+
+  CATEGORIES.forEach(cat => {
+    const itemsForCat = ITEMS.filter(i => i.category === cat.id);
+    if (!itemsForCat.length) return;
+
+    const section = document.createElement("section");
+    section.className = "home-section";
+
+    // セクションHTML
+    section.innerHTML = `
+      <div class="home-section-header">
+        <h3 class="home-section-title">${cat.label}</h3>
+        <button class="home-section-arrow" data-category="${cat.id}">➜</button>
+      </div>
+      <div class="home-scroll">
+        ${itemsForCat.map(item => `
+          <div class="home-item-card">
+            <div class="home-thumb-wrap">
+              <span>写真</span>
+              <button class="home-plus-btn" data-id="${item.id}">＋</button>
+            </div>
+            <div class="home-item-info">
+              <div class="home-item-price">¥${item.price.toLocaleString()}</div>
+              <div class="home-item-name">${item.name}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    homeSectionsEl.appendChild(section);
+  });
+
+  // ＋ボタン → カートに追加
+  homeSectionsEl.querySelectorAll(".home-plus-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      addToCart(id);
+    });
+  });
+
+  // 右矢印 → そのカテゴリーの一覧ページへ
+  homeSectionsEl.querySelectorAll(".home-section-arrow").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cat = btn.getAttribute("data-category");
+
+      // タブの見た目も切り替え
+      document.querySelectorAll(".category-tab").forEach(tab => {
+        tab.classList.toggle(
+          "active",
+          tab.getAttribute("data-category") === cat
+        );
+      });
+
+      currentCategory = cat;
+      renderItems();   // 縦一覧を描画
+      showListView();  // 一覧画面を表示
+    });
+  });
+}
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
   function renderItems() {
     itemListEl.innerHTML = "";
     const filtered = ITEMS.filter(item =>
