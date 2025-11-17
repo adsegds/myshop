@@ -151,21 +151,38 @@
   gap: 12px;
 }
 
-    .item-card {
-      display: flex;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    }
-    .item-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-width: 0;
-    }
+.item-card {
+  display: flex;
+  flex-direction: column;   /* ← 横並び → 縦並びに変更 */
+  gap: 8px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* カード上部の写真エリア（カード幅いっぱい） */
+.item-thumb {
+  width: 100%;
+  height: 110px;
+  border-radius: 12px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #777;
+}
+
+/* テキスト部分を縦積み */
+.item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+
+    
     .item-name {
       font-size: 14px;
       font-weight: 600;
