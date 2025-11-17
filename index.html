@@ -941,9 +941,14 @@
     showCartView();
   });
 
-  toListBtn.addEventListener("click", () => {
-    showListView();
-  });
+  // これが下のメニューバーのメニュー一覧ボタン！
+toListBtn.addEventListener("click", () => {
+  if (currentCategory === "all") {
+    showHomeView();   // すべてタブ → ホーム（横スクロール）
+  } else {
+    showListView();   // それ以外 → 縦の一覧
+  }
+});
 
   orderBtn.addEventListener("click", handleOrder);
 
