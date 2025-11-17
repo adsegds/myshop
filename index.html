@@ -1133,6 +1133,16 @@ function renderItems() {
     storeView.classList.add("hidden");
   }
 
+  function showStoreView() {
+  homeView.classList.add("hidden");
+  listView.classList.add("hidden");
+  cartView.classList.add("hidden");
+  completeView.classList.add("hidden");
+  ordersView.classList.add("hidden");
+  storeView.classList.remove("hidden");
+}
+
+
   function showCompleteView(orderId) {
     homeView.classList.add("hidden");
     listView.classList.add("hidden");
