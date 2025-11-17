@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>取り置きアプリ（テスト）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* 全体リセット＆ベース */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    .app-shell {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    /* ヘッダー */
+    .app-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .app-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .cart-button {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      cursor: pointer;
+      position: relative;
+    }
+    .cart-count-badge {
+      position: absolute;
+      top: -6px;
+      right: -10px;
+      font-size: 11px;
+      background: #ff5b5b;
+      color: #fff;
+      border-radius: 999px;
+      padding: 1px 5px;
+    }
+
+    /* タブ (カテゴリ) */
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px 4px;
+      overflow-x: auto;
+      border-bottom: 1px solid #eee;
+    }
+    .category-tab {
+      flex-shrink: 0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .category-tab.active {
+      border-color: #222;
+      font-weight: 600;
+    }
+
+    /* コンテンツエリア */
+    .app-main {
+      padding: 10px 12px 80px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    /* 商品カード */
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .item-card {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      background: #fff;
+    }
+    .item-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #888;
+    }
+    .item-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .item-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .item-meta {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+    .item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .item-price {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .item-add-btn {
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 5px 12px;
+      border: none;
+      cursor: pointer;
+      background: #222;
+      color: #fff;
+    }
+
+    /* カート画面 */
+    .cart-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .cart-row span:last-child {
+      font-weight: 600;
+    }
+    .cart-total {
+      margin-top: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .form-group {
+      margin-top: 10px;
+    }
+    .form-label {
+      font-size: 12px;
+      margin-bottom: 3px;
+      display: block;
+    }
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    /* フッターナビ（仮） */
+    .app-footer {
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      border-top: 1px solid #eee;
+      padding: 8px 12px;
+      display: flex;
+      gap: 8px;
+    }
+    .footer-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .footer-btn.primary {
+      background: #222;
+      color: #fff;
+    }
+    .footer-btn.secondary {
+      background: #f2f2f2;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- ヘッダー -->
+  <header class="app-header">
+    <div class="app-title">南部町 夜食取り置き</div>
+    <button class="cart-button" id="cartButton">
+      カート
+      <span class="cart-count-badge" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <!-- カテゴリタブ -->
+  <div class="category-tabs" id="categoryTabs">
+    <button class="category-tab active" data-category="all">すべて</button>
+    <button class="category-tab" data-category="hotsnack">ホットスナック</button>
+    <button class="category-tab" data-category="drink">飲料</button>
+    <button class="category-tab" data-category="bread">パン</button>
+    <button class="category-tab" data-category="limited">取り置き限定</button>
+  </div>
+
+  <!-- メイン -->
+  <main class="app-main">
+    <!-- 商品一覧 -->
+    <section id="listView">
+      <div class="item-list" id="itemList"></div>
+    </section>
+
+    <!-- カート＆注文フォーム -->
+    <section id="cartView" class="hidden">
+      <h2 style="font-size:15px;margin-bottom:8px;">カート内容</h2>
+      <div id="cartList" class="cart-list"></div>
+      <div id="cartTotal" class="cart-total"></div>
+
+      <div id="emptyCartMsg" style="font-size:13px;color:#777;">カートは空です。</div>
+
+      <div id="orderForm" class="hidden">
+        <div class="form-group">
+          <label class="form-label">お名前</label>
+          <input type="text" class="form-input" id="nameInput" placeholder="例）山田 太郎">
+        </div>
+        <div class="form-group">
+          <label class="form-label">電話番号</label>
+          <input type="tel" class="form-input" id="telInput" placeholder="090-xxxx-xxxx">
+        </div>
+        <div class="form-group">
+          <label class="form-label">受け取り時間</label>
+          <select class="form-select" id="timeSelect">
+            <option value="">選択してください</option>
+            <option value="18:00-19:00">18:00〜19:00</option>
+            <option value="19:00-20:00">19:00〜20:00</option>
+            <option value="20:00-21:00">20:00〜21:00</option>
+            <option value="21:00-22:00">21:00〜22:00</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- 完了画面 -->
+    <section id="completeView" class="hidden">
+      <h2 style="font-size:16px;margin-bottom:8px;">取り置き受付完了</h2>
+      <p id="completeMessage" style="font-size:14px;line-height:1.5;"></p>
+      <p style="font-size:12px;color:#777;margin-top:6px;">
+        ※この画面をスクショしてレジでお見せください。
+      </p>
+    </section>
+  </main>
+
+  <!-- フッター -->
+  <footer class="app-footer">
+    <button class="footer-btn secondary" id="toListBtn">メニュー</button>
+    <button class="footer-btn primary" id="orderBtn">取り置きを確定</button>
+  </footer>
+
+</div>
+
+<script>
+  // 仮データ（あとでスプレッドシートとかと連携もできる）
+  const ITEMS = [
+    {
+      id: "hs-01",
+      name: "からあげクン レギュラー",
+      category: "hotsnack",
+      price: 240,
+      desc: "定番人気のホットスナック。"
+    },
+    {
+      id: "hs-02",
+      name: "Lチキ レギュラー",
+      category: "hotsnack",
+      price: 238,
+      desc: "ジューシーなフライドチキン。"
+    },
+    {
+      id: "dr-01",
+      name: "アイスコーヒー M",
+      category: "drink",
+      price: 180,
+      desc: "スッキリ苦味のあるコーヒー。"
+    },
+    {
+      id: "br-01",
+      name: "ふんわりたまごサンド",
+      category: "bread",
+      price: 268,
+      desc: "たまごたっぷりのサンドイッチ。"
+    },
+    {
+      id: "lm-01",
+      name: "爆盛りから揚げ弁当（取り置き限定）",
+      category: "limited",
+      price: 598,
+      desc: "取り置き限定のスペシャル弁当。"
+    }
+  ];
+
+  const itemListEl = document.getElementById("itemList");
+  const categoryTabsEl = document.getElementById("categoryTabs");
+  const cartButton = document.getElementById("cartButton");
+  const cartCountEl = document.getElementById("cartCount");
+  const listView = document.getElementById("listView");
+  const cartView = document.getElementById("cartView");
+  const completeView = document.getElementById("completeView");
+  const cartListEl = document.getElementById("cartList");
+  const cartTotalEl = document.getElementById("cartTotal");
+  const emptyCartMsg = document.getElementById("emptyCartMsg");
+  const orderForm = document.getElementById("orderForm");
+  const toListBtn = document.getElementById("toListBtn");
+  const orderBtn = document.getElementById("orderBtn");
+  const nameInput = document.getElementById("nameInput");
+  const telInput = document.getElementById("telInput");
+  const timeSelect = document.getElementById("timeSelect");
+  const completeMessage = document.getElementById("completeMessage");
+
+  let currentCategory = "all";
+  let cart = [];
+
+  function renderItems() {
+    itemListEl.innerHTML = "";
+    const filtered = ITEMS.filter(item =>
+      currentCategory === "all" ? true : item.category === currentCategory
+    );
+
+    filtered.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "item-card";
+
+      card.innerHTML = `
+        <div class="item-thumb">
+          写真
+        </div>
+        <div class="item-body">
+          <div>
+            <div class="item-name">${item.name}</div>
+            <div class="item-meta">${item.desc}</div>
+          </div>
+          <div class="item-footer">
+            <div class="item-price">¥${item.price.toLocaleString()}</div>
+            <button class="item-add-btn" data-id="${item.id}">追加</button>
+          </div>
+        </div>
+      `;
+      itemListEl.appendChild(card);
+    });
+
+    // 「追加」ボタンにイベント付与
+    document.querySelectorAll(".item-add-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        addToCart(id);
+      });
+    });
+  }
+
+  function addToCart(id) {
+    const target = ITEMS.find(i => i.id === id);
+    if (!target) return;
+
+    const existing = cart.find(c => c.id === id);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ id: target.id, name: target.name, price: target.price, qty: 1 });
+    }
+    updateCartView();
+  }
+
+  function updateCartView() {
+    // バッジ更新
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    cartCountEl.textContent = totalQty;
+
+    // カート中身
+    cartListEl.innerHTML = "";
+    if (cart.length === 0) {
+      emptyCartMsg.classList.remove("hidden");
+      orderForm.classList.add("hidden");
+      cartTotalEl.textContent = "";
+      return;
+    }
+
+    emptyCartMsg.classList.add("hidden");
+    orderForm.classList.remove("hidden");
+
+    let totalPrice = 0;
+    cart.forEach(item => {
+      totalPrice += item.price * item.qty;
+      const row = document.createElement("div");
+      row.className = "cart-row";
+      row.innerHTML = `
+        <span>${item.name} × ${item.qty}</span>
+        <span>¥${(item.price * item.qty).toLocaleString()}</span>
+      `;
+      cartListEl.appendChild(row);
+    });
+    cartTotalEl.textContent = `合計：¥${totalPrice.toLocaleString()}（税込み目安）`;
+  }
+
+  function showListView() {
+    listView.classList.remove("hidden");
+    cartView.classList.add("hidden");
+    completeView.classList.add("hidden");
+  }
+
+  function showCartView() {
+    listView.classList.add("hidden");
+    cartView.classList.remove("hidden");
+    completeView.classList.add("hidden");
+    updateCartView();
+  }
+
+  function showCompleteView(orderId) {
+    listView.classList.add("hidden");
+    cartView.classList.add("hidden");
+    completeView.classList.remove("hidden");
+
+    completeMessage.innerHTML = `
+      ご注文ありがとうございます。<br>
+      注文番号：<strong>${orderId}</strong><br>
+      受け取り時間：${timeSelect.value || "未指定"}<br>
+      スタッフにこの番号をお伝えください。
+    `;
+  }
+
+  // カテゴリタブ操作
+  categoryTabsEl.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("category-tab")) return;
+    document.querySelectorAll(".category-tab").forEach(tab => tab.classList.remove("active"));
+    e.target.classList.add("active");
+    currentCategory = e.target.getAttribute("data-category");
+    renderItems();
+  });
+
+  // カートボタン
+  cartButton.addEventListener("click", () => {
+    showCartView();
+  });
+
+  // フッターボタン
+  toListBtn.addEventListener("click", () => {
+    showListView();
+  });
+
+  // 取り置き確定（今は画面上で完結するダミー）
+  orderBtn.addEventListener("click", () => {
+    if (cart.length === 0) {
+      alert("カートが空です。");
+      return;
+    }
+    if (!nameInput.value || !telInput.value || !timeSelect.value) {
+      alert("お名前・電話番号・受け取り時間を入力してください。");
+      return;
+    }
+
+    // 本当はここでメール送信 or Googleフォーム連携にする
+    const orderId = "RY-" + String(Math.floor(Math.random() * 999999)).padStart(6, "0");
+    showCompleteView(orderId);
+
+    // フォームとカートを初期化
+    cart = [];
+    updateCartView();
+    nameInput.value = "";
+    telInput.value = "";
+    timeSelect.value = "";
+  });
+
+  // 初期表示
+  renderItems();
+  updateCartView();
+</script>
+</body>
+</html>
