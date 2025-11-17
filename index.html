@@ -228,19 +228,80 @@
     }
 
     .cart-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .cart-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-    }
-    .cart-row span:last-child {
-      font-weight: 600;
-    }
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Uber風カート行 */
+.cart-row {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 4px;
+}
+
+.cart-row-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cart-row-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cart-row-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* − / ＋ の丸ボタン */
+.cart-circle-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #111;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ゴミ箱ボタン */
+.cart-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.cart-qty {
+  min-width: 16px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.cart-row-price {
+  margin-top: 6px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+    
     .cart-total {
       margin-top: 6px;
       font-size: 14px;
