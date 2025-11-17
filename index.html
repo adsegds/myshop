@@ -775,8 +775,11 @@ function renderHomeSections() {
       });
 
       currentCategory = cat;
-      renderItems();   // 縦一覧を描画
-      showListView();  // 一覧画面を表示
+      renderItems();        // 縦一覧用（カテゴリ押された時用）
+renderHomeSections(); // ホーム用
+showHomeView();       // 最初はホームを表示
+updateCartView();
+
     });
   });
 }
