@@ -931,11 +931,13 @@ function removeFromCart(index) {
 
 
   function showCartView() {
-    listView.classList.add("hidden");
-    cartView.classList.remove("hidden");
-    completeView.classList.add("hidden");
-    updateCartView();
-  }
+  homeView.classList.add("hidden");   // ←これ追加
+  listView.classList.add("hidden");
+  cartView.classList.remove("hidden");
+  completeView.classList.add("hidden");
+  updateCartView();
+}
+
 
   function showCompleteView(orderId) {
     listView.classList.add("hidden");
