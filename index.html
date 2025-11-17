@@ -146,10 +146,11 @@
 
     /* Uber風商品カード：左テキスト / 右サムネ */
     .item-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
     .item-card {
       display: flex;
       gap: 10px;
