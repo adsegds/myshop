@@ -784,27 +784,63 @@
 
 
 
+
+  
+
+
  <!-- 店舗マップ画面 -->
-  <section id="storeView" class="hidden">
-    <h2 class="section-title">店舗の場所</h2>
-    <p style="font-size:13px;color:#666;margin-bottom:8px;">
-      夜食取り置きの受け取り場所です。
-    </p>
-
-    <div class="store-map">
-      <!-- ★ここは仮。あとで自分のGoogleマップ埋め込みURLに差し替えてOK -->
-      <iframe
-        src="https://www.google.com/maps/embed?pb=XXXXXXXXXXXX"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
+<section id="storeView" class="hidden">
+  <div class="store-header">
+    <div>
+      <div class="store-name">ローソン 南部の里店</div>
+      <div class="store-sub">鳥取県西伯郡南部町〇〇〇〇</div>
     </div>
+    <span class="store-badge">店舗情報</span>
+  </div>
 
-    <button class="store-map-btn"
-      onclick="window.open('https://maps.google.com/?q=ローソン 南部の里店','_blank')">
-      Googleマップで開く
-    </button>
-  </section>
+  <div class="store-chip-row">
+    <span class="store-chip">店頭受け取り専用</span>
+    <span class="store-chip">24時間営業</span>
+    <span class="store-chip">駐車場あり</span>
+  </div>
+
+  <div class="store-info-row">
+    <div class="store-info-label">アクセス</div>
+    <div class="store-info-text">
+      ○○交差点から車で約3分。<br>
+      ローソン南部の里店のレジでお受け取りください。
+    </div>
+  </div>
+
+  <div class="store-info-row">
+    <div class="store-info-label">住所</div>
+    <div class="store-info-text">
+      鳥取県西伯郡南部町〇〇〇〇<br>
+      （※ここは後で正式な住所に書き換えてOK）
+    </div>
+  </div>
+
+  <h3 class="store-map-title">地図</h3>
+  <div class="store-map">
+    <!-- ★ ここはあとで本物の Google Maps 埋め込みURLに差し替える -->
+    <iframe
+      src="https://www.google.com/maps/embed?pb=XXXXXXXXXXXX"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+    ></iframe>
+  </div>
+
+  <button class="store-map-btn"
+    onclick="window.open('https://maps.google.com/?q=ローソン 南部の里店','_blank')">
+    Googleマップアプリで開く
+  </button>
+</section>
+
+
+
+
+
+  
 
 
 
