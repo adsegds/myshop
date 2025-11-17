@@ -447,12 +447,18 @@
   </div>
 
   <!-- メイン -->
-  <main class="app-main">
-    <!-- 商品一覧 -->
-    <section id="listView">
-      <div class="item-list" id="itemList"></div>
-    </section>
+<main class="app-main">
+  <!-- ホーム（横スクロール棚） -->
+  <section id="homeView">
+    <div id="homeSections"></div>
+  </section>
 
+  <!-- カテゴリ別 商品一覧（縦一覧） -->
+  <section id="listView" class="hidden">
+    <div class="item-list" id="itemList"></div>
+  </section>
+
+  
     <!-- カート＆注文フォーム -->
     <section id="cartView" class="hidden">
       <h2 class="section-title">カート</h2>
