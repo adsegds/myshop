@@ -1121,7 +1121,10 @@ toListBtn.addEventListener("click", () => {
   }
 });
 
-  orderBtn.addEventListener("click", handleOrder);
+    orderBtn.addEventListener("click", () => {
+    showOrdersView();
+  });
+
 
   function handleOrder() {
     if (cart.length === 0) {
