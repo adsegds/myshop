@@ -1042,11 +1042,20 @@
     completeView.classList.remove("hidden");
     ordersView.classList.add("hidden");
 
+    completeMessage.innerHTML = `
+      ご注文ありがとうございます。<br>
+      注文番号：<strong>${orderId}</strong><br>
+      受け取り時間：${timeSelect.value || "未指定"}<br>
+      スタッフにこの番号をお伝えください。
+    `;
+  }
 
 
-    
 
-  function showOrdersView() {
+
+
+
+ function showOrdersView() {
     homeView.classList.add("hidden");
     listView.classList.add("hidden");
     cartView.classList.add("hidden");
@@ -1057,17 +1066,7 @@
 
 
 
-
-
-    
-
-    completeMessage.innerHTML = `
-      ご注文ありがとうございます。<br>
-      注文番号：<strong>${orderId}</strong><br>
-      受け取り時間：${timeSelect.value || "未指定"}<br>
-      スタッフにこの番号をお伝えください。
-    `;
-  }
+  
 
   // ================= イベント =================
   // カテゴリタブ
