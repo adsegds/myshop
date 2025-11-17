@@ -633,42 +633,79 @@
   }
 
   function updateCartView() {
-    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-    cartCountEl.textContent = totalQty;
+  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  cartCountEl.textContent = totalQty;
 
-    // カート画面
-    cartListEl.innerHTML = "";
-    if (cart.length === 0) {
-      emptyCartMsg.classList.remove("hidden");
-      orderForm.classList.add("hidden");
-      cartTotalEl.textContent = "";
-    } else {
-      emptyCartMsg.classList.add("hidden");
-      orderForm.classList.remove("hidden");
+  // カート画面
+  cartListEl.innerHTML = "";
+  if (cart.length === 0) {
+    emptyCartMsg.classList.remove("hidden");
+    orderForm.classList.add("hidden");
+    cartTotalEl.textContent = "";
+  } else {
+    emptyCartMsg.classList.add("hidden");
+    orderForm.classList.remove("hidden");
 
-      let localTotal = 0;
-      cart.forEach(item => {
-        localTotal += item.price * item.qty;
-        const row = document.createElement("div");
-        row.className = "cart-row";
-        row.innerHTML = `
-          <span>${item.name} × ${item.qty}</span>
-          <span>¥${(item.price * item.qty).toLocaleString()}</span>
-        `;
-        cartListEl.appendChild(row);
-      });
-      cartTotalEl.textContent = `合計：¥${localTotal.toLocaleString()}（税込み目安）`;
-    }
+    let localTotal = 0;
+    cart.forEach((item, index) => {
+      localTotal += item.price * item.qty;
 
-    // 下カートバー更新
-    if (totalQty === 0) {
-      cartBar.classList.add("hidden");
-    } else {
-      cartBar.classList.remove("hidden");
-      cartBarLine1.textContent = `${totalQty}点 ・ ¥${totalPrice.toLocaleString()}`;
-    }
+      const row = document.createElement("div");
+      row.className = "cart-row";
+
+      row.innerHTML = `
+        <div class="cart-row-main">
+          <div class="cart-row-name">${item.name}</div>
+          <div class="cart-row-controls">
+            <button class="cart-icon-btn" onclick="removeFromCart(${index})">🗑</button>
+            <button class="cart-circle-btn" onclick="changeCartQty(${index}, -1)">−</button>
+            <span class="cart-qty">${item.qty}</span>
+            <button class="cart-circle-btn" onclick="changeCartQty(${index}, 1)">＋</button>
+          </div>
+        </div>
+        <div class="cart-row-price">¥${(item.price * item.qty).toLocaleString()}</div>
+      `;
+      cartListEl.appendChild(row);
+    });
+
+    cartTotalEl.textContent = `合計：¥${localTotal.toLocaleString()}（税込み目安）`;
   }
+
+  if (totalQty === 0) {
+    cartBar.classList.add("hidden");
+  } else {
+    cartBar.classList.remove("hidden");
+    cartBarLine1.textContent = `${totalQty}点 ・ ¥${totalPrice.toLocaleString()}`;
+  }
+}
+
+
+
+function changeCartQty(index, delta) {
+  const item = cart[index];
+  if (!item) return;
+
+  item.qty += delta;
+
+  if (item.qty <= 0) {
+    cart.splice(index, 1);
+  }
+
+  updateCartView();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCartView();
+}
+
+
+
+  
+
+
+  
 
   function showListView() {
     listView.classList.remove("hidden");
