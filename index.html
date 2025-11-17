@@ -917,44 +917,42 @@
   }
 
   // ================= カテゴリ別 縦一覧 =================
+// ================= カテゴリ別 縦一覧 =================
 function renderItems() {
   itemListEl.innerHTML = "";
+
   const filtered = ITEMS.filter(item =>
     currentCategory === "all" ? true : item.category === currentCategory
   );
 
   filtered.forEach(item => {
     const card = document.createElement("div");
-    card.className = "item-card";
+    // ここポイント！ homeと同じクラスを使う
+    card.className = "home-item-card";
 
     card.innerHTML = `
-      <div class="item-thumb">
-        写真
+      <div class="home-thumb-wrap">
+        <span>写真</span>
+        <button class="home-plus-btn" data-id="${item.id}">＋</button>
       </div>
-      <div class="item-body">
-        <div class="item-name">${item.name}</div>
-        <div class="item-meta">${item.desc}</div>
-        <div class="item-footer">
-          <div class="item-price-block">
-            <div class="item-tag">${item.tag || ""}</div>
-            <div class="item-price">¥${item.price.toLocaleString()}</div>
-          </div>
-          <button class="item-add-btn" data-id="${item.id}">追加</button>
-        </div>
+      <div class="home-item-info">
+        <div class="home-item-price">¥${item.price.toLocaleString()}</div>
+        <div class="home-item-name">${item.name}</div>
       </div>
     `;
 
     itemListEl.appendChild(card);
   });
 
-  // 「追加」ボタンにイベント付与
-  itemListEl.querySelectorAll(".item-add-btn").forEach(btn => {
+  // ＋ボタンでカート追加
+  itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.getAttribute("data-id");
       addToCart(id);
     });
   });
 }
+
 
 
   // ================= カート処理 =================
