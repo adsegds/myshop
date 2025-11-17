@@ -973,12 +973,34 @@ function showHomeView() {
 
   // カテゴリタップ
   categoryTabsEl.addEventListener("click", (e) => {
-    if (!e.target.classList.contains("category-tab")) return;
-    document.querySelectorAll(".category-tab").forEach(tab => tab.classList.remove("active"));
-    e.target.classList.add("active");
-    currentCategory = e.target.getAttribute("data-category");
+  if (!e.target.classList.contains("category-tab")) return;
+
+  document.querySelectorAll(".category-tab").forEach(tab =>
+    tab.classList.remove("active")
+  );
+  e.target.classList.add("active");
+
+  const cat = e.target.getAttribute("data-category");
+  currentCategory = cat;
+
+  if (cat === "all") {
+    // 「すべて」＝ ホーム画面
+    showHomeView();
+  } else {
+    // それ以外はカテゴリー別の縦一覧
     renderItems();
-  });
+    showListView();
+  }
+});
+
+
+
+
+
+
+
+
+  
 
   // カートボタン
   cartButton.addEventListener("click", () => {
