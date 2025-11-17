@@ -1029,6 +1029,7 @@
     listView.classList.remove("hidden");
     cartView.classList.add("hidden");
     completeView.classList.add("hidden");
+    ordersView.classList.add("hidden");
   }
 
   function showCartView() {
@@ -1036,6 +1037,7 @@
     listView.classList.add("hidden");
     cartView.classList.remove("hidden");
     completeView.classList.add("hidden");
+    ordersView.classList.add("hidden");
     updateCartView();
   }
 
@@ -1044,6 +1046,7 @@
     listView.classList.add("hidden");
     cartView.classList.add("hidden");
     completeView.classList.add("hidden");
+    ordersView.classList.add("hidden");
   }
 
   function showCompleteView(orderId) {
@@ -1051,6 +1054,7 @@
     listView.classList.add("hidden");
     cartView.classList.add("hidden");
     completeView.classList.remove("hidden");
+    ordersView.classList.add("hidden");
 
     completeMessage.innerHTML = `
       ご注文ありがとうございます。<br>
