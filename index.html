@@ -911,44 +911,45 @@
   }
 
   // ================= カテゴリ別 縦一覧 =================
-  function renderItems() {
-    itemListEl.innerHTML = "";
-    const filtered = ITEMS.filter(item =>
-      currentCategory === "all" ? true : item.category === currentCategory
-    );
+function renderItems() {
+  itemListEl.innerHTML = "";
+  const filtered = ITEMS.filter(item =>
+    currentCategory === "all" ? true : item.category === currentCategory
+  );
 
-    filtered.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "item-card";
+  filtered.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "item-card";
 
-      card.innerHTML = `
-        <div class="item-body">
-          <div>
-            <div class="item-name">${item.name}</div>
-            <div class="item-meta">${item.desc}</div>
+    card.innerHTML = `
+      <div class="item-thumb">
+        写真
+      </div>
+      <div class="item-body">
+        <div class="item-name">${item.name}</div>
+        <div class="item-meta">${item.desc}</div>
+        <div class="item-footer">
+          <div class="item-price-block">
+            <div class="item-tag">${item.tag || ""}</div>
+            <div class="item-price">¥${item.price.toLocaleString()}</div>
           </div>
-          <div class="item-footer">
-            <div class="item-price-block">
-              <div class="item-tag">${item.tag || ""}</div>
-              <div class="item-price">¥${item.price.toLocaleString()}</div>
-            </div>
-            <button class="item-add-btn" data-id="${item.id}">追加</button>
-          </div>
+          <button class="item-add-btn" data-id="${item.id}">追加</button>
         </div>
-        <div class="item-thumb">
-          写真
-        </div>
-      `;
-      itemListEl.appendChild(card);
-    });
+      </div>
+    `;
 
-    document.querySelectorAll(".item-add-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-id");
-        addToCart(id);
-      });
+    itemListEl.appendChild(card);
+  });
+
+  // 「追加」ボタンにイベント付与
+  itemListEl.querySelectorAll(".item-add-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      addToCart(id);
     });
-  }
+  });
+}
+
 
   // ================= カート処理 =================
   function addToCart(id) {
