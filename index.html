@@ -663,6 +663,35 @@
     <div class="item-list" id="itemList"></div>
   </section>
 
+
+
+
+ <!-- 店舗マップ画面 -->
+  <section id="storeView" class="hidden">
+    <h2 class="section-title">店舗の場所</h2>
+    <p style="font-size:13px;color:#666;margin-bottom:8px;">
+      夜食取り置きの受け取り場所です。
+    </p>
+
+    <div class="store-map">
+      <!-- ★ここは仮。あとで自分のGoogleマップ埋め込みURLに差し替えてOK -->
+      <iframe
+        src="https://www.google.com/maps/embed?pb=XXXXXXXXXXXX"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+
+    <button class="store-map-btn"
+      onclick="window.open('https://maps.google.com/?q=ローソン 南部の里店','_blank')">
+      Googleマップで開く
+    </button>
+  </section>
+
+
+
+  
+
   
     <!-- カート＆注文フォーム -->
     <section id="cartView" class="hidden">
