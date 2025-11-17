@@ -618,22 +618,8 @@
 </div>
 
 <script>
+  // 商品データ
   const ITEMS = [
-
-
-
-const CATEGORIES = [
-  { id: "hotsnack", label: "ホットスナック" },
-  { id: "drink",    label: "飲料" },
-  { id: "bread",    label: "パン" },
-  { id: "limited",  label: "取り置き限定" },
-];
-
-
-
-
-
-    
     {
       id: "hs-01",
       name: "からあげクン レギュラー",
@@ -676,128 +662,103 @@ const CATEGORIES = [
     }
   ];
 
+  // ホーム画面に出すカテゴリ
+  const CATEGORIES = [
+    { id: "hotsnack", label: "ホットスナック" },
+    { id: "drink",    label: "飲料" },
+    { id: "bread",    label: "パン" },
+    { id: "limited",  label: "取り置き限定" },
+  ];
 
-
-
-
-
-
-  const homeView = document.getElementById("homeView");
-  const homeSectionsEl = document.getElementById("homeSections");
-
-
-  const itemListEl = document.getElementById("itemList");
-  const categoryTabsEl = document.getElementById("categoryTabs");
-  const cartButton = document.getElementById("cartButton");
-  const cartCountEl = document.getElementById("cartCount");
-  const listView = document.getElementById("listView");
-  const cartView = document.getElementById("cartView");
-  const completeView = document.getElementById("completeView");
-  const cartListEl = document.getElementById("cartList");
-  const cartTotalEl = document.getElementById("cartTotal");
-  const emptyCartMsg = document.getElementById("emptyCartMsg");
-  const orderForm = document.getElementById("orderForm");
-  const toListBtn = document.getElementById("toListBtn");
-  const orderBtn = document.getElementById("orderBtn");
-  const nameInput = document.getElementById("nameInput");
-  const telInput = document.getElementById("telInput");
-  const timeSelect = document.getElementById("timeSelect");
+  const homeView        = document.getElementById("homeView");
+  const homeSectionsEl  = document.getElementById("homeSections");
+  const itemListEl      = document.getElementById("itemList");
+  const categoryTabsEl  = document.getElementById("categoryTabs");
+  const cartButton      = document.getElementById("cartButton");
+  const cartCountEl     = document.getElementById("cartCount");
+  const listView        = document.getElementById("listView");
+  const cartView        = document.getElementById("cartView");
+  const completeView    = document.getElementById("completeView");
+  const cartListEl      = document.getElementById("cartList");
+  const cartTotalEl     = document.getElementById("cartTotal");
+  const emptyCartMsg    = document.getElementById("emptyCartMsg");
+  const orderForm       = document.getElementById("orderForm");
+  const toListBtn       = document.getElementById("toListBtn");
+  const orderBtn        = document.getElementById("orderBtn");
+  const nameInput       = document.getElementById("nameInput");
+  const telInput        = document.getElementById("telInput");
+  const timeSelect      = document.getElementById("timeSelect");
   const completeMessage = document.getElementById("completeMessage");
-  const cartBar = document.getElementById("cartBar");
-  const cartBarLine1 = document.getElementById("cartBarLine1");
-  const cartBarInner = document.getElementById("cartBarInner");
+  const cartBar         = document.getElementById("cartBar");
+  const cartBarLine1    = document.getElementById("cartBarLine1");
+  const cartBarInner    = document.getElementById("cartBarInner");
 
   let currentCategory = "all";
   let cart = [];
 
+  // ================= ホーム（横スクロール棚） =================
+  function renderHomeSections() {
+    homeSectionsEl.innerHTML = "";
 
+    CATEGORIES.forEach(cat => {
+      const itemsForCat = ITEMS.filter(i => i.category === cat.id);
+      if (!itemsForCat.length) return;
 
+      const section = document.createElement("section");
+      section.className = "home-section";
 
-
-
-
-
-// ホーム（横スクロール棚）を描画
-function renderHomeSections() {
-  homeSectionsEl.innerHTML = "";
-
-  CATEGORIES.forEach(cat => {
-    const itemsForCat = ITEMS.filter(i => i.category === cat.id);
-    if (!itemsForCat.length) return;
-
-    const section = document.createElement("section");
-    section.className = "home-section";
-
-    // セクションHTML
-    section.innerHTML = `
-      <div class="home-section-header">
-        <h3 class="home-section-title">${cat.label}</h3>
-        <button class="home-section-arrow" data-category="${cat.id}">➜</button>
-      </div>
-      <div class="home-scroll">
-        ${itemsForCat.map(item => `
-          <div class="home-item-card">
-            <div class="home-thumb-wrap">
-              <span>写真</span>
-              <button class="home-plus-btn" data-id="${item.id}">＋</button>
+      section.innerHTML = `
+        <div class="home-section-header">
+          <h3 class="home-section-title">${cat.label}</h3>
+          <button class="home-section-arrow" data-category="${cat.id}">➜</button>
+        </div>
+        <div class="home-scroll">
+          ${itemsForCat.map(item => `
+            <div class="home-item-card">
+              <div class="home-thumb-wrap">
+                <span>写真</span>
+                <button class="home-plus-btn" data-id="${item.id}">＋</button>
+              </div>
+              <div class="home-item-info">
+                <div class="home-item-price">¥${item.price.toLocaleString()}</div>
+                <div class="home-item-name">${item.name}</div>
+              </div>
             </div>
-            <div class="home-item-info">
-              <div class="home-item-price">¥${item.price.toLocaleString()}</div>
-              <div class="home-item-name">${item.name}</div>
-            </div>
-          </div>
-        `).join("")}
-      </div>
-    `;
+          `).join("")}
+        </div>
+      `;
 
-    homeSectionsEl.appendChild(section);
-  });
-
-  // ＋ボタン → カートに追加
-  homeSectionsEl.querySelectorAll(".home-plus-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-id");
-      addToCart(id);
+      homeSectionsEl.appendChild(section);
     });
-  });
 
-  // 右矢印 → そのカテゴリーの一覧ページへ
-  homeSectionsEl.querySelectorAll(".home-section-arrow").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const cat = btn.getAttribute("data-category");
-
-      // タブの見た目も切り替え
-      document.querySelectorAll(".category-tab").forEach(tab => {
-        tab.classList.toggle(
-          "active",
-          tab.getAttribute("data-category") === cat
-        );
+    // ＋ボタン → カートに追加
+    homeSectionsEl.querySelectorAll(".home-plus-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        addToCart(id);
       });
-
-      currentCategory = cat;
-      renderItems();        // 縦一覧用（カテゴリ押された時用）
-renderHomeSections(); // ホーム用
-showHomeView();       // 最初はホームを表示
-updateCartView();
-
     });
-  });
-}
 
+    // 右矢印 → そのカテゴリーの一覧ページへ
+    homeSectionsEl.querySelectorAll(".home-section-arrow").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cat = btn.getAttribute("data-category");
 
+        document.querySelectorAll(".category-tab").forEach(tab => {
+          tab.classList.toggle(
+            "active",
+            tab.getAttribute("data-category") === cat
+          );
+        });
 
-  
+        currentCategory = cat;
+        renderItems();
+        showListView();
+      });
+    });
+  }
 
-
-
-
-
-
-
-
-
-
-  
+  // ================= カテゴリ別 縦一覧 =================
   function renderItems() {
     itemListEl.innerHTML = "";
     const filtered = ITEMS.filter(item =>
@@ -837,6 +798,7 @@ updateCartView();
     });
   }
 
+  // ================= カート処理 =================
   function addToCart(id) {
     const target = ITEMS.find(i => i.id === id);
     if (!target) return;
@@ -851,117 +813,93 @@ updateCartView();
   }
 
   function updateCartView() {
-  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  cartCountEl.textContent = totalQty;
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    cartCountEl.textContent = totalQty;
 
-  // カート画面
-  cartListEl.innerHTML = "";
-  if (cart.length === 0) {
-    emptyCartMsg.classList.remove("hidden");
-    orderForm.classList.add("hidden");
-    cartTotalEl.textContent = "";
-  } else {
-    emptyCartMsg.classList.add("hidden");
-    orderForm.classList.remove("hidden");
+    cartListEl.innerHTML = "";
+    if (cart.length === 0) {
+      emptyCartMsg.classList.remove("hidden");
+      orderForm.classList.add("hidden");
+      cartTotalEl.textContent = "";
+    } else {
+      emptyCartMsg.classList.add("hidden");
+      orderForm.classList.remove("hidden");
 
-    let localTotal = 0;
-    cart.forEach((item, index) => {
-      localTotal += item.price * item.qty;
+      let localTotal = 0;
+      cart.forEach((item, index) => {
+        localTotal += item.price * item.qty;
 
-      const row = document.createElement("div");
-      row.className = "cart-row";
+        const row = document.createElement("div");
+        row.className = "cart-row";
 
-      row.innerHTML = `
-        <div class="cart-row-main">
-          <div class="cart-row-name">${item.name}</div>
-          <div class="cart-row-controls">
-            <button class="cart-icon-btn" onclick="removeFromCart(${index})">🗑</button>
-            <button class="cart-circle-btn" onclick="changeCartQty(${index}, -1)">−</button>
-            <span class="cart-qty">${item.qty}</span>
-            <button class="cart-circle-btn" onclick="changeCartQty(${index}, 1)">＋</button>
+        row.innerHTML = `
+          <div class="cart-row-main">
+            <div class="cart-row-name">${item.name}</div>
+            <div class="cart-row-controls">
+              <button class="cart-icon-btn" onclick="removeFromCart(${index})">🗑</button>
+              <button class="cart-circle-btn" onclick="changeCartQty(${index}, -1)">−</button>
+              <span class="cart-qty">${item.qty}</span>
+              <button class="cart-circle-btn" onclick="changeCartQty(${index}, 1)">＋</button>
+            </div>
           </div>
-        </div>
-        <div class="cart-row-price">¥${(item.price * item.qty).toLocaleString()}</div>
-      `;
-      cartListEl.appendChild(row);
-    });
+          <div class="cart-row-price">¥${(item.price * item.qty).toLocaleString()}</div>
+        `;
+        cartListEl.appendChild(row);
+      });
 
-    cartTotalEl.textContent = `合計：¥${localTotal.toLocaleString()}（税込み目安）`;
+      cartTotalEl.textContent = `合計：¥${localTotal.toLocaleString()}（税込み目安）`;
+    }
+
+    if (totalQty === 0) {
+      cartBar.classList.add("hidden");
+    } else {
+      cartBar.classList.remove("hidden");
+      cartBarLine1.textContent = `${totalQty}点 ・ ¥${totalPrice.toLocaleString()}`;
+    }
   }
 
-  if (totalQty === 0) {
-    cartBar.classList.add("hidden");
-  } else {
-    cartBar.classList.remove("hidden");
-    cartBarLine1.textContent = `${totalQty}点 ・ ¥${totalPrice.toLocaleString()}`;
+  function changeCartQty(index, delta) {
+    const item = cart[index];
+    if (!item) return;
+
+    item.qty += delta;
+    if (item.qty <= 0) {
+      cart.splice(index, 1);
+    }
+    updateCartView();
   }
-}
 
-
-
-function changeCartQty(index, delta) {
-  const item = cart[index];
-  if (!item) return;
-
-  item.qty += delta;
-
-  if (item.qty <= 0) {
+  function removeFromCart(index) {
     cart.splice(index, 1);
+    updateCartView();
   }
 
-  updateCartView();
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  updateCartView();
-}
-
-
-
-  
-
-
-  
-
- function showListView() {
-  homeView.classList.add("hidden");
-  listView.classList.remove("hidden");
-  cartView.classList.add("hidden");
-  completeView.classList.add("hidden");
-}
-
+  // ================= 画面切り替え =================
+  function showListView() {
+    homeView.classList.add("hidden");
+    listView.classList.remove("hidden");
+    cartView.classList.add("hidden");
+    completeView.classList.add("hidden");
+  }
 
   function showCartView() {
-  homeView.classList.add("hidden");   // ←これ追加
-  listView.classList.add("hidden");
-  cartView.classList.remove("hidden");
-  completeView.classList.add("hidden");
-  updateCartView();
-}
+    homeView.classList.add("hidden");
+    listView.classList.add("hidden");
+    cartView.classList.remove("hidden");
+    completeView.classList.add("hidden");
+    updateCartView();
+  }
 
-
-
-
-
-function showHomeView() {
-  homeView.classList.remove("hidden");
-  listView.classList.add("hidden");
-  cartView.classList.add("hidden");
-  completeView.classList.add("hidden");
-}
-
-
-
-
-
-
-
-  
-
+  function showHomeView() {
+    homeView.classList.remove("hidden");
+    listView.classList.add("hidden");
+    cartView.classList.add("hidden");
+    completeView.classList.add("hidden");
+  }
 
   function showCompleteView(orderId) {
+    homeView.classList.add("hidden");
     listView.classList.add("hidden");
     cartView.classList.add("hidden");
     completeView.classList.remove("hidden");
@@ -974,48 +912,35 @@ function showHomeView() {
     `;
   }
 
-  // カテゴリタップ
+  // ================= イベント =================
+  // カテゴリタブ
   categoryTabsEl.addEventListener("click", (e) => {
-  if (!e.target.classList.contains("category-tab")) return;
+    if (!e.target.classList.contains("category-tab")) return;
 
-  document.querySelectorAll(".category-tab").forEach(tab =>
-    tab.classList.remove("active")
-  );
-  e.target.classList.add("active");
+    document.querySelectorAll(".category-tab").forEach(tab =>
+      tab.classList.remove("active")
+    );
+    e.target.classList.add("active");
 
-  const cat = e.target.getAttribute("data-category");
-  currentCategory = cat;
+    const cat = e.target.getAttribute("data-category");
+    currentCategory = cat;
 
-  if (cat === "all") {
-    // 「すべて」＝ ホーム画面
-    showHomeView();
-  } else {
-    // それ以外はカテゴリー別の縦一覧
-    renderItems();
-    showListView();
-  }
-});
+    if (cat === "all") {
+      showHomeView();
+    } else {
+      renderItems();
+      showListView();
+    }
+  });
 
-
-
-
-
-
-
-
-  
-
-  // カートボタン
   cartButton.addEventListener("click", () => {
     showCartView();
   });
 
-  // 下カートバーを押した時もカート画面へ
   cartBarInner.addEventListener("click", () => {
     showCartView();
   });
 
-  // フッターボタン
   toListBtn.addEventListener("click", () => {
     showListView();
   });
@@ -1042,14 +967,17 @@ function showHomeView() {
     timeSelect.value = "";
   }
 
-  // 下カートバー右側ボタンにも確定処理を紐づけたい場合は以下も有効に
   document.querySelector(".cart-bar-btn").addEventListener("click", (e) => {
-    e.stopPropagation(); // 親のクリックイベントを止める
+    e.stopPropagation();
     handleOrder();
   });
 
-  renderItems();
+  // ================= 初期表示 =================
+  renderHomeSections(); // ホーム用
+  renderItems();        // 一覧用（あとで使う）
+  showHomeView();       // 最初はホーム
   updateCartView();
 </script>
+
 </body>
 </html>
