@@ -969,52 +969,30 @@
 
 </div>
 
-<script>
-  // 商品データ
-  const ITEMS = [
-    {
-      id: "hs-01",
-      name: "からあげクン レギュラー",
-      category: "hotsnack",
-      price: 240,
-      desc: "定番人気のホットスナック。",
-      tag: "ホットスナック"
-    },
-    {
-      id: "hs-02",
-      name: "Lチキ レギュラー",
-      category: "hotsnack",
-      price: 238,
-      desc: "ジューシーなフライドチキン。",
-      tag: "ホットスナック"
-    },
-    {
-      id: "dr-01",
-      name: "アイスコーヒー M",
-      category: "drink",
-      price: 180,
-      desc: "スッキリ苦味のあるコーヒー。",
-      tag: "ドリンク"
-    },
-    {
-      id: "br-01",
-      name: "ふんわりたまごサンド",
-      category: "bread",
-      price: 268,
-      desc: "たまごたっぷりのサンドイッチ。",
-      tag: "パン"
-    },
-    {
-      id: "lm-01",
-      name: "爆盛りから揚げ弁当（取り置き限定）",
-      category: "limited",
-      price: 598,
-      desc: "取り置き限定のスペシャル弁当。",
-      tag: "限定"
-    }
-  ];
+<script type="module">
+  // ================= Firebase 読み込み =================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  // ホーム画面に出すカテゴリ
+  // ★ さっきメモした firebaseConfig をそのまま使う
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
+    authDomain: "myshop-nanbu.firebaseapp.com",
+    projectId: "myshop-nanbu",
+    storageBucket: "myshop-nanbu.firebasestorage.app",
+    messagingSenderId: "122308310474",
+    appId: "1:122308310474:web:44c10cd3709feb5eb14b33",
+    measurementId: "G-0WLVED7GQF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ================== 商品データ ==================
+  // ここはもう Firestore から取るので、最初は空
+  let ITEMS = [];
+
+  // ホーム画面に出すカテゴリ（これは今まで通り固定でOK）
   const CATEGORIES = [
     { id: "hotsnack", label: "ホットスナック" },
     { id: "drink",    label: "飲料" },
@@ -1022,11 +1000,12 @@
     { id: "limited",  label: "取り置き限定" },
   ];
 
+  // ============ DOM 取得 ============
   const homeView        = document.getElementById("homeView");
   const homeSectionsEl  = document.getElementById("homeSections");
   const itemListEl      = document.getElementById("itemList");
-    const storeView      = document.getElementById("storeView");
-  const storeBtn       = document.getElementById("storeBtn");
+  const storeView       = document.getElementById("storeView");
+  const storeBtn        = document.getElementById("storeBtn");
 
   const categoryTabsEl  = document.getElementById("categoryTabs");
   const cartButton      = document.getElementById("cartButton");
@@ -1053,6 +1032,26 @@
 
   let currentCategory = "all";
   let cart = [];
+
+  // ============ Firestore から items を読む ============
+  async function loadItemsFromFirestore() {
+    try {
+      const snap = await getDocs(collection(db, "items"));
+      ITEMS = snap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // データを取ってきたあとに UI を描画
+      renderHomeSections();
+      renderItems();
+      showHomeView();
+      updateCartView();
+    } catch (err) {
+      console.error("Firestore 読み込みエラー:", err);
+      alert("商品データの読み込みに失敗しました。時間をおいて再度お試しください。");
+    }
+  }
 
   // ================= ホーム（横スクロール棚） =================
   function renderHomeSections() {
@@ -1097,7 +1096,7 @@
       });
     });
 
-    // 右矢印 → そのカテゴリーの一覧ページへ
+    // 矢印 → そのカテゴリの一覧へ
     homeSectionsEl.querySelectorAll(".home-section-arrow").forEach(btn => {
       btn.addEventListener("click", () => {
         const cat = btn.getAttribute("data-category");
@@ -1117,43 +1116,38 @@
   }
 
   // ================= カテゴリ別 縦一覧 =================
-// ================= カテゴリ別 縦一覧 =================
-function renderItems() {
-  itemListEl.innerHTML = "";
+  function renderItems() {
+    itemListEl.innerHTML = "";
 
-  const filtered = ITEMS.filter(item =>
-    currentCategory === "all" ? true : item.category === currentCategory
-  );
+    const filtered = ITEMS.filter(item =>
+      currentCategory === "all" ? true : item.category === currentCategory
+    );
 
-  filtered.forEach(item => {
-    const card = document.createElement("div");
-    // ここポイント！ homeと同じクラスを使う
-    card.className = "home-item-card";
+    filtered.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "home-item-card";
 
-    card.innerHTML = `
-      <div class="home-thumb-wrap">
-        <span>写真</span>
-        <button class="home-plus-btn" data-id="${item.id}">＋</button>
-      </div>
-      <div class="home-item-info">
-        <div class="home-item-price">¥${item.price.toLocaleString()}</div>
-        <div class="home-item-name">${item.name}</div>
-      </div>
-    `;
+      card.innerHTML = `
+        <div class="home-thumb-wrap">
+          <span>写真</span>
+          <button class="home-plus-btn" data-id="${item.id}">＋</button>
+        </div>
+        <div class="home-item-info">
+          <div class="home-item-price">¥${item.price.toLocaleString()}</div>
+          <div class="home-item-name">${item.name}</div>
+        </div>
+      `;
 
-    itemListEl.appendChild(card);
-  });
-
-  // ＋ボタンでカート追加
-  itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-id");
-      addToCart(id);
+      itemListEl.appendChild(card);
     });
-  });
-}
 
-
+    itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        addToCart(id);
+      });
+    });
+  }
 
   // ================= カート処理 =================
   function addToCart(id) {
@@ -1189,15 +1183,14 @@ function renderItems() {
 
         const row = document.createElement("div");
         row.className = "cart-row";
-
         row.innerHTML = `
           <div class="cart-row-main">
             <div class="cart-row-name">${item.name}</div>
             <div class="cart-row-controls">
-              <button class="cart-icon-btn" onclick="removeFromCart(${index})">🗑</button>
-              <button class="cart-circle-btn" onclick="changeCartQty(${index}, -1)">−</button>
+              <button class="cart-icon-btn" data-index="${index}" data-action="remove">🗑</button>
+              <button class="cart-circle-btn" data-index="${index}" data-action="minus">−</button>
               <span class="cart-qty">${item.qty}</span>
-              <button class="cart-circle-btn" onclick="changeCartQty(${index}, 1)">＋</button>
+              <button class="cart-circle-btn" data-index="${index}" data-action="plus">＋</button>
             </div>
           </div>
           <div class="cart-row-price">¥${(item.price * item.qty).toLocaleString()}</div>
@@ -1214,12 +1207,26 @@ function renderItems() {
       cartBar.classList.remove("hidden");
       cartBarLine1.textContent = `${totalQty}点 ・ ¥${totalPrice.toLocaleString()}`;
     }
+
+    // 行のボタンにイベント付け
+    cartListEl.querySelectorAll(".cart-icon-btn, .cart-circle-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const index  = Number(btn.dataset.index);
+        const action = btn.dataset.action;
+        if (action === "remove") {
+          removeFromCart(index);
+        } else if (action === "minus") {
+          changeCartQty(index, -1);
+        } else if (action === "plus") {
+          changeCartQty(index, 1);
+        }
+      });
+    });
   }
 
   function changeCartQty(index, delta) {
     const item = cart[index];
     if (!item) return;
-
     item.qty += delta;
     if (item.qty <= 0) {
       cart.splice(index, 1);
@@ -1262,14 +1269,13 @@ function renderItems() {
   }
 
   function showStoreView() {
-  homeView.classList.add("hidden");
-  listView.classList.add("hidden");
-  cartView.classList.add("hidden");
-  completeView.classList.add("hidden");
-  ordersView.classList.add("hidden");
-  storeView.classList.remove("hidden");
-}
-
+    homeView.classList.add("hidden");
+    listView.classList.add("hidden");
+    cartView.classList.add("hidden");
+    completeView.classList.add("hidden");
+    ordersView.classList.add("hidden");
+    storeView.classList.remove("hidden");
+  }
 
   function showCompleteView(orderId) {
     homeView.classList.add("hidden");
@@ -1287,24 +1293,35 @@ function renderItems() {
     `;
   }
 
-
-
-
-
-
- function showOrdersView() {
+  function showOrdersView() {
     homeView.classList.add("hidden");
     listView.classList.add("hidden");
     cartView.classList.add("hidden");
     completeView.classList.add("hidden");
     ordersView.classList.remove("hidden");
-   　storeView.classList.add("hidden");
+    storeView.classList.add("hidden");
   }
 
+  // ================= 注文確定 =================
+  function handleOrder() {
+    if (cart.length === 0) {
+      alert("カートが空です。");
+      return;
+    }
+    if (!nameInput.value || !telInput.value || !timeSelect.value) {
+      alert("お名前・電話番号・受け取り時間を入力してください。");
+      return;
+    }
 
+    const orderId = "RY-" + String(Math.floor(Math.random() * 999999)).padStart(6, "0");
+    showCompleteView(orderId);
 
-
-  
+    cart = [];
+    updateCartView();
+    nameInput.value = "";
+    telInput.value = "";
+    timeSelect.value = "";
+  }
 
   // ================= イベント =================
   // カテゴリタブ
@@ -1327,23 +1344,8 @@ function renderItems() {
     }
   });
 
-  cartButton.addEventListener("click", () => {
-    showCartView();
-  });
-
-  cartBarInner.addEventListener("click", () => {
-    showCartView();
-  });
-
-
-
-
-
-
-
-
-
-
+  cartButton.addEventListener("click", showCartView);
+  cartBarInner.addEventListener("click", showCartView);
 
   // 注文タブ切り替え
   document.querySelectorAll(".order-tab").forEach(tab => {
@@ -1351,6 +1353,7 @@ function renderItems() {
       document.querySelectorAll(".order-tab").forEach(t =>
         t.classList.remove("active")
       );
+      tab.addEventListener("click", () => {});
       tab.classList.add("active");
 
       const tabId = tab.getAttribute("data-tab");
@@ -1366,14 +1369,12 @@ function renderItems() {
 
   // 「注文を開始する」ボタン → メニューへ戻す
   document.getElementById("startOrderBtn").addEventListener("click", () => {
-    // すべてタブをアクティブにしてホームへ
     currentCategory = "all";
     document.querySelectorAll(".category-tab").forEach(tab => {
       tab.classList.toggle("active", tab.getAttribute("data-category") === "all");
     });
     showHomeView();
   });
-
   document.getElementById("startOrderBtn2").addEventListener("click", () => {
     currentCategory = "all";
     document.querySelectorAll(".category-tab").forEach(tab => {
@@ -1382,79 +1383,27 @@ function renderItems() {
     showHomeView();
   });
 
-
-
-
-
-
-
-
-
-
-  
-
-  // これが下のメニューバーのメニュー一覧ボタン！
-toListBtn.addEventListener("click", () => {
-  if (currentCategory === "all") {
-    showHomeView();   // すべてタブ → ホーム（横スクロール）
-  } else {
-    showListView();   // それ以外 → 縦の一覧
-  }
-});
-
-    orderBtn.addEventListener("click", () => {
-    showOrdersView();
+  // 下メニュー
+  toListBtn.addEventListener("click", () => {
+    if (currentCategory === "all") {
+      showHomeView();
+    } else {
+      showListView();
+    }
   });
+  orderBtn.addEventListener("click", showOrdersView);
+  storeBtn.addEventListener("click", showStoreView);
 
-
-
-
-
-// ★ ここを新しく追加 ★
-storeBtn.addEventListener("click", () => {
-  showStoreView();
-});
-
-
-
-
-
-
-
-  
-
-
-  function handleOrder() {
-    if (cart.length === 0) {
-      alert("カートが空です。");
-      return;
-    }
-    if (!nameInput.value || !telInput.value || !timeSelect.value) {
-      alert("お名前・電話番号・受け取り時間を入力してください。");
-      return;
-    }
-
-    const orderId = "RY-" + String(Math.floor(Math.random() * 999999)).padStart(6, "0");
-    showCompleteView(orderId);
-
-    cart = [];
-    updateCartView();
-    nameInput.value = "";
-    telInput.value = "";
-    timeSelect.value = "";
-  }
-
+  // カートバーのボタン → 注文確定
   document.querySelector(".cart-bar-btn").addEventListener("click", (e) => {
     e.stopPropagation();
     handleOrder();
   });
 
-  // ================= 初期表示 =================
-  renderHomeSections(); // ホーム用
-  renderItems();        // 一覧用（あとで使う）
-  showHomeView();       // 最初はホーム
-  updateCartView();
+  // ================= 初期処理：Firestore から商品読み込み =================
+  loadItemsFromFirestore();
 </script>
+
 
 </body>
 </html>
