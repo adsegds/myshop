@@ -526,6 +526,27 @@ async function updateStatus(orderId, newStatus) {
       });
     });
 
+
+    // ===== タブ切り替え =====
+    tabOrders.addEventListener("click", () => {
+      tabOrders.classList.add("active");
+      tabItems.classList.remove("active");
+      ordersSection.classList.remove("hidden");
+      itemsSection.classList.add("hidden");
+    });
+
+    tabItems.addEventListener("click", () => {
+      tabItems.classList.add("active");
+      tabOrders.classList.remove("active");
+      ordersSection.classList.add("hidden");
+      itemsSection.classList.remove("hidden");
+      loadItems(); // 商品タブを開いたタイミングで読み込み
+    });
+
+
+
+    
+
     // 初回読み込み
     loadOrders();
   </script>
