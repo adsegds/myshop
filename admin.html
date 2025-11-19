@@ -639,28 +639,40 @@
       }
     }
 
-    function renderCategorySelects() {
-      // 親なし = カテゴリ1
-      const topLevel = allCategories.filter(c => !c.parentId);
+    // カテゴリ1（親なし）リストをセレクトに反映
+function renderCategorySelects() {
+  const topLevel = allCategories.filter(c => !c.parentId); // 親なし = カテゴリ1
 
-      // 親セレクト（カテゴリ追加用）
-      categoryParentSelect.innerHTML =
-        `<option value="">親カテゴリなし（カテゴリ1）</option>` +
-        topLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  // 親セレクト（カテゴリ追加用）
+  categoryParentSelect.innerHTML =
+    `<option value="">親カテゴリなし（カテゴリ1）</option>` +
+    topLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 
-      // 商品フォームのカテゴリ1
-      itemCategory1Select.innerHTML =
-        `<option value="">カテゴリ1（大ジャンル）</option>` +
-        topLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  // 商品フォームのカテゴリ1
+  const currentValue = itemCategory1Select.value; // いま選んでる値を一旦メモ
+  itemCategory1Select.innerHTML =
+    `<option value="">カテゴリ1（大ジャンル）</option>` +
+    topLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
 
-      // 商品フォームのカテゴリ2（カテゴリ1に応じて絞り込み）
-      const parentId = itemCategory1Select.value;
-      const secondLevel = allCategories.filter(c => c.parentId === parentId);
+  // さっき選んでいた値があれば復元
+  if (currentValue) {
+    itemCategory1Select.value = currentValue;
+  }
 
-      itemCategory2Select.innerHTML =
-        `<option value="">カテゴリ2（サブジャンル / 任意）</option>` +
-        secondLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
-    }
+  // カテゴリ2側も更新
+  renderCategory2Options();
+}
+
+// カテゴリ1の選択に応じてカテゴリ2だけを更新
+function renderCategory2Options() {
+  const parentId = itemCategory1Select.value;
+  const secondLevel = allCategories.filter(c => c.parentId === parentId);
+
+  itemCategory2Select.innerHTML =
+    `<option value="">カテゴリ2（サブジャンル / 任意）</option>` +
+    secondLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+}
+
 
     // カテゴリ1変更時にカテゴリ2を更新
     itemCategory1Select.addEventListener("change", renderCategorySelects);
