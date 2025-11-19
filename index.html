@@ -1201,38 +1201,65 @@ function renderDrinkList() {
 
   
   // ================= カテゴリ別 縦一覧 =================
-  function renderItems() {
-    itemListEl.innerHTML = "";
+function renderItems() {
+  // デフォルトは「グリッド表示」に戻す
+  itemListEl.classList.remove("grouped");
+  itemListEl.innerHTML = "";
 
-    const filtered = ITEMS.filter(item =>
-      currentCategory === "all" ? true : item.category === currentCategory
-    );
-
-    filtered.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "home-item-card";
-
-      card.innerHTML = `
-        <div class="home-thumb-wrap">
-          <span>写真</span>
-          <button class="home-plus-btn" data-id="${item.id}">＋</button>
-        </div>
-        <div class="home-item-info">
-          <div class="home-item-price">¥${item.price.toLocaleString()}</div>
-          <div class="home-item-name">${item.name}</div>
-        </div>
-      `;
-
-      itemListEl.appendChild(card);
-    });
-
-    itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-id");
-        addToCart(id);
-      });
-    });
+  // ★飲料タブだけは「カテゴリ2ごと」に分けて表示
+  if (currentCategory === "drink") {
+    renderDrinkList();
+    return;
   }
+
+  // currentCategory → category1Name の対応表
+  let targetCategory1Name = null;
+  if (currentCategory === "hotsnack") {
+    targetCategory1Name = "ホットスナック";
+  } else if (currentCategory === "bread") {
+    targetCategory1Name = "パン";
+  } else if (currentCategory === "limited") {
+    targetCategory1Name = "取り置き限定";
+  }
+  // ※ 必要に応じてここに増やしていけばOK
+
+  const filtered = ITEMS.filter(item => {
+    if (currentCategory === "all") return true;
+    if (!targetCategory1Name) return true; // 念のため
+    return item.category1Name === targetCategory1Name;
+  });
+
+  if (!filtered.length) {
+    itemListEl.innerHTML = `<p class="order-empty-text">商品がありません。</p>`;
+    return;
+  }
+
+  filtered.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "home-item-card";
+
+    card.innerHTML = `
+      <div class="home-thumb-wrap">
+        <span>写真</span>
+        <button class="home-plus-btn" data-id="${item.id}">＋</button>
+      </div>
+      <div class="home-item-info">
+        <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
+        <div class="home-item-name">${item.name}</div>
+      </div>
+    `;
+
+    itemListEl.appendChild(card);
+  });
+
+  itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      addToCart(id);
+    });
+  });
+}
+
 
   // ================= カート処理 =================
   function addToCart(id) {
