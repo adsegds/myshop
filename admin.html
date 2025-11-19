@@ -719,30 +719,47 @@
 
     reloadItemsBtn.addEventListener("click", loadItems);
 
-    itemForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name     = itemNameInput.value.trim();
-      const price    = Number(itemPriceInput.value);
-      const category = itemCategorySelect.value;
+      // 商品追加フォーム
+  itemForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name     = itemNameInput.value.trim();
+    const price    = Number(itemPriceInput.value);
+    const category = itemCategorySelect.value;
+    const file     = itemImageInput.files[0] || null;
 
-      if (!name || !price || !category) {
-        alert("商品名・価格・カテゴリを入力してください。");
-        return;
-      }
+    if (!name || !price || !category) {
+      alert("商品名・価格・カテゴリを入力してください。");
+      return;
+    }
 
-      try {
-        await addDoc(collection(db, "items"), {
-          name,
-          price,
-          category
+    try {
+      // 1. まず Firestore に商品ドキュメントを追加（画像なしで）
+      const docRef = await addDoc(collection(db, "items"), {
+        name,
+        price,
+        category
+      });
+
+      // 2. 画像が選ばれていれば Storage にアップロードして URL を保存
+      if (file) {
+        const storageRef = ref(storage, `items/${docRef.id}`); // items/ドキュメントID
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+
+        await updateDoc(docRef, {
+          imageUrl: url
         });
-        itemForm.reset();
-        loadItems();
-      } catch (err) {
-        console.error("商品追加エラー:", err);
-        alert("商品の追加に失敗しました。");
       }
-    });
+
+      // フォームリセット & 再読み込み
+      itemForm.reset();
+      loadItems();
+    } catch (err) {
+      console.error("商品追加エラー:", err);
+      alert("商品の追加に失敗しました。");
+    }
+  });
+
 
     // 初回読み込み
     loadOrders();
