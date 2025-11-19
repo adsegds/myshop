@@ -699,14 +699,19 @@
           const id = btn.dataset.id;
           if (!confirm("この商品を削除しますか？")) return;
 
-          try {
-            await deleteDoc(doc(db, "items", id));
-            allItems = allItems.filter(i => i.id !== id);
-            renderItemsTable();
-          } catch (err) {
-            console.error("商品削除エラー:", err);
-            alert("商品の削除に失敗しました。");
-          }
+                  try {
+          // Storage の画像も削除（あれば）
+          const imgRef = ref(storage, `items/${id}`);
+          await deleteObject(imgRef).catch(() => {}); // 無くてもエラー無視
+
+          await deleteDoc(doc(db, "items", id));
+          allItems = allItems.filter(i => i.id !== id);
+          renderItemsTable();
+        } catch (err) {
+          console.error("商品削除エラー:", err);
+          alert("商品の削除に失敗しました。");
+        }
+
         });
       });
     }
