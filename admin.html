@@ -812,52 +812,52 @@ itemCategory1Select.addEventListener("change", renderCategory2Options);
     });
 
     // 商品追加フォーム
-    itemForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name  = itemNameInput.value.trim();
-      const price = Number(itemPriceInput.value);
-      const file  = itemImageInput.files[0] || null;
+itemForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name  = itemNameInput.value.trim();
+  const price = Number(itemPriceInput.value);
+  const file  = itemImageInput.files[0] || null;
 
-      const category1Id = itemCategory1Select.value || null;
-      const category2Id = itemCategory2Select.value || null;
+  const category1Id = itemCategory1Select.value || null;
+  const category2Id = itemCategory2Select.value || null;
 
-      if (!name || !price || !category1Id) {
-        alert("商品名・価格・カテゴリ1を入力してください。");
-        return;
-      }
+  if (!name || !price || !category1Id) {
+    alert("商品名・価格・カテゴリ1を入力してください。");
+    return;
+  }
 
-      const cat1 = allCategories.find(c => c.id === category1Id) || null;
-      const cat2 = allCategories.find(c => c.id === category2Id) || null;
+  const cat1 = allCategories.find(c => c.id === category1Id) || null;
+  const cat2 = allCategories.find(c => c.id === category2Id) || null;
 
-      try {
-        // 1. Firestore に商品ドキュメント追加
-        const docRef = await addDoc(collection(db, "items"), {
-          name,
-          price,
-          category1Id,
-          category1Name: cat1?.name || "",
-          category2Id,
-          category2Name: cat2?.name || ""
-        });
-
-        // 2. 画像があれば Storage にアップロード → URL を保存
-        if (file) {
-          const storageRef = ref(storage, `items/${docRef.id}`);
-          await uploadBytes(storageRef, file);
-          const url = await getDownloadURL(storageRef);
-          await updateDoc(docRef, { imageUrl: url });
-        }
-
-        itemForm.reset();
-// カテゴリ1が空になるので、それに合わせてカテゴリ2だけ初期化
-renderCategory2Options();
-loadItems();
-
-      } catch (err) {
-        console.error("商品追加エラー:", err);
-        alert("商品の追加に失敗しました。");
-      }
+  try {
+    // 1. Firestore に商品ドキュメント追加
+    const docRef = await addDoc(collection(db, "items"), {
+      name,
+      price,
+      category1Id,
+      category1Name: cat1?.name || "",
+      category2Id,
+      category2Name: cat2?.name || ""
     });
+
+    // 2. 画像があれば Storage にアップロード → URL を保存
+    if (file) {
+      const storageRef = ref(storage, `items/${docRef.id}`);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      await updateDoc(docRef, { imageUrl: url });
+    }
+
+    itemForm.reset();
+    renderCategory2Options();
+    loadItems();   // ← これでテーブル再読み込み
+
+  } catch (err) {
+    console.error("商品追加エラー:", err);
+    alert("商品の追加に失敗しました。");
+  }
+});
+
 
     // カテゴリ追加フォーム
     categoryForm.addEventListener("submit", async (e) => {
