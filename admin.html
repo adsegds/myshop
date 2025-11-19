@@ -302,6 +302,56 @@ async function updateStatus(orderId, newStatus) {
 
 
 
+
+
+
+
+
+
+
+    const tableWrap = document.getElementById("tableWrap");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const filterButtons = document.querySelectorAll(".status-filter-btn");
+
+    // 🔽 タブ
+    const tabOrders      = document.getElementById("tabOrders");
+    const tabItems       = document.getElementById("tabItems");
+    const ordersSection  = document.getElementById("ordersSection");
+    const itemsSection   = document.getElementById("itemsSection");
+
+    // 🔽 商品マスタ用
+    const reloadItemsBtn    = document.getElementById("reloadItemsBtn");
+    const itemsTableWrap    = document.getElementById("itemsTableWrap");
+    const itemForm          = document.getElementById("itemForm");
+    const itemNameInput     = document.getElementById("itemNameInput");
+    const itemPriceInput    = document.getElementById("itemPriceInput");
+    const itemCategorySelect= document.getElementById("itemCategorySelect");
+
+    let allOrders = [];
+    let currentFilter = "all";
+
+    let allItems = []; // ★ 商品マスタ用
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
     
     const firebaseConfig = {
       apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
