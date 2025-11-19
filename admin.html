@@ -657,16 +657,24 @@
         return;
       }
 
-      const rowsHtml = allItems.map(item => `
-        <tr data-id="${item.id}">
-          <td>${item.name || "-"}</td>
-          <td>¥${(item.price ?? 0).toLocaleString()}</td>
-          <td>${item.category || "-"}</td>
-          <td>
-            <button class="danger-btn item-delete-btn" data-id="${item.id}">削除</button>
-          </td>
-        </tr>
-      `).join("");
+          const rowsHtml = allItems.map(item => `
+      <tr data-id="${item.id}">
+        <td>${item.name || "-"}</td>
+        <td>
+          ${
+            item.imageUrl
+              ? `<img src="${item.imageUrl}" class="item-thumb" alt="${item.name}">`
+              : "-"
+          }
+        </td>
+        <td>¥${(item.price ?? 0).toLocaleString()}</td>
+        <td>${item.category || "-"}</td>
+        <td>
+          <button class="danger-btn item-delete-btn" data-id="${item.id}">削除</button>
+        </td>
+      </tr>
+    `).join("");
+
 
           itemsTableWrap.innerHTML = `
       <table>
