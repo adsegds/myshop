@@ -218,21 +218,57 @@
   </style>
 </head>
 <body>
-  <h1>夜食取り置き 管理画面</h1>
-  <div class="sub">ローソン南部の里店 / Firestore: orders 一覧</div>
+    <h1>夜食取り置き 管理画面</h1>
+  <div class="sub">ローソン南部の里店 / Firestore 管理</div>
 
-  <div class="toolbar">
-    <button id="reloadBtn" class="reload-btn">🔄 更新</button>
-
-    <span style="font-size:12px;">ステータス絞り込み：</span>
-    <button class="status-filter-btn active" data-status="all">すべて</button>
-    <button class="status-filter-btn" data-status="new">new</button>
-    <button class="status-filter-btn" data-status="preparing">preparing</button>
-    <button class="status-filter-btn" data-status="ready">ready</button>
-    <button class="status-filter-btn" data-status="done">done</button>
+  <!-- 🔽 タブ -->
+  <div class="nav-tabs">
+    <button id="tabOrders" class="nav-tab active">注文一覧</button>
+    <button id="tabItems" class="nav-tab">商品マスタ</button>
   </div>
 
-  <div id="tableWrap"></div>
+  <!-- 🔽 注文セクション -->
+  <section id="ordersSection">
+    <div class="toolbar">
+      <button id="reloadBtn" class="reload-btn">🔄 更新</button>
+
+      <span style="font-size:12px;">ステータス絞り込み：</span>
+      <button class="status-filter-btn active" data-status="all">すべて</button>
+      <button class="status-filter-btn" data-status="new">new</button>
+      <button class="status-filter-btn" data-status="preparing">preparing</button>
+      <button class="status-filter-btn" data-status="ready">ready</button>
+      <button class="status-filter-btn" data-status="done">done</button>
+    </div>
+
+    <div id="tableWrap"></div>
+  </section>
+
+  <!-- 🔽 商品マスタセクション -->
+  <section id="itemsSection" class="hidden">
+    <div class="toolbar">
+      <span style="font-size:12px;">商品マスタ（Firestore: items）</span>
+      <button id="reloadItemsBtn" class="reload-btn">🔄 更新</button>
+    </div>
+
+    <!-- 追加フォーム -->
+    <form id="itemForm" class="item-form">
+      <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
+      <input id="itemPriceInput" type="number" min="0" step="10" placeholder="価格 例）240" required />
+      <select id="itemCategorySelect" required>
+        <option value="">カテゴリ</option>
+        <option value="hotsnack">ホットスナック</option>
+        <option value="drink">飲料</option>
+        <option value="bread">パン</option>
+        <option value="limited">取り置き限定</option>
+      </select>
+      <button type="submit">＋ 商品追加</button>
+    </form>
+
+    <div class="item-small">※ ここで追加した商品が、フロント側のメニューに反映される想定。</div>
+    <br />
+    <div id="itemsTableWrap"></div>
+  </section>
+
 
   <script type="module">
   // ================= Firebase 読み込み =================
