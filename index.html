@@ -1303,26 +1303,54 @@
     storeView.classList.add("hidden");
   }
 
-  // ================= 注文確定 =================
-  function handleOrder() {
-    if (cart.length === 0) {
-      alert("カートが空です。");
-      return;
-    }
-    if (!nameInput.value || !telInput.value || !timeSelect.value) {
-      alert("お名前・電話番号・受け取り時間を入力してください。");
-      return;
-    }
+  // ================= 注文確定（Firestore保存版） =================
+async function handleOrder() {
+  if (cart.length === 0) {
+    alert("カートが空です。");
+    return;
+  }
+  if (!nameInput.value || !telInput.value || !timeSelect.value) {
+    alert("お名前・電話番号・受け取り時間を入力してください。");
+    return;
+  }
 
-    const orderId = "RY-" + String(Math.floor(Math.random() * 999999)).padStart(6, "0");
-    showCompleteView(orderId);
+  try {
+    // Firestore に保存するデータを作成
+    const orderData = {
+      storeId: "lawson-nanbu-1",
+      status: "new",
+      customerName: nameInput.value,
+      tel: telInput.value,
+      pickupTime: timeSelect.value,
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        qty: item.qty,
+        price: item.price
+      })),
+      total: cart.reduce((sum, item) => sum + item.price * item.qty, 0),
+      createdAt: serverTimestamp()   // ← Firebase に時間を自動で入れさせる
+    };
 
+    // Firestore に追加
+    const docRef = await addDoc(collection(db, "orders"), orderData);
+
+    // 完了画面へ
+    showCompleteView(docRef.id);
+
+    // カート初期化
     cart = [];
     updateCartView();
     nameInput.value = "";
     telInput.value = "";
     timeSelect.value = "";
+
+  } catch (err) {
+    console.error("注文保存エラー:", err);
+    alert("注文の保存に失敗しました。時間をおいて再度お試しください。");
   }
+}
+
 
   // ================= イベント =================
   // カテゴリタブ
