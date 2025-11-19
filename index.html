@@ -1141,6 +1141,65 @@ function renderHomeSections() {
 }
 
 
+
+
+// ===== 飲料タブ専用：カテゴリ2ごとにセクション分けして表示 =====
+function renderDrinkList() {
+  // レイアウトを「縦に段々」用に変更
+  itemListEl.classList.add("grouped");
+  itemListEl.innerHTML = "";
+
+  // ★カテゴリ1が「飲料」の商品だけ
+  const drinkItems = ITEMS.filter(
+    item => item.category1Name === "飲料"
+  );
+
+  if (!drinkItems.length) {
+    itemListEl.innerHTML = `<p class="order-empty-text">飲料の商品がありません。</p>`;
+    return;
+  }
+
+  // カテゴリ2でグループ分け
+  const groups = groupByCategory2(drinkItems); // { "炭酸": [...], "コーヒー": [...], ... }
+  const sectionNames = Object.keys(groups).sort();
+
+  sectionNames.forEach(sectionName => {
+    const sectionEl = document.createElement("section");
+    sectionEl.className = "front-category-section";
+
+    sectionEl.innerHTML = `
+      <h2 class="front-category-heading">${sectionName}</h2>
+      <div class="front-category-row">
+        ${groups[sectionName].map(item => `
+          <div class="home-item-card">
+            <div class="home-thumb-wrap">
+              <span>写真</span>
+              <button class="home-plus-btn" data-id="${item.id}">＋</button>
+            </div>
+            <div class="home-item-info">
+              <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
+              <div class="home-item-name">${item.name}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    itemListEl.appendChild(sectionEl);
+  });
+
+  // ＋ボタン → カートに追加
+  itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      addToCart(id);
+    });
+  });
+}
+
+
+
+  
   // ================= カテゴリ別 縦一覧 =================
   function renderItems() {
     itemListEl.innerHTML = "";
