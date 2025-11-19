@@ -5,9 +5,7 @@
   <title>夜食取り置き 管理画面</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -55,9 +53,7 @@
       margin: 0;
     }
 
-    .sidebar-nav li {
-      margin-bottom: 2px;
-    }
+    .sidebar-nav li { margin-bottom: 2px; }
 
     .sidebar-link {
       display: block;
@@ -82,9 +78,7 @@
       overflow-x: auto;
     }
 
-    .page-header {
-      margin-bottom: 16px;
-    }
+    .page-header { margin-bottom: 16px; }
 
     .page-title {
       font-size: 20px;
@@ -132,9 +126,7 @@
       margin-bottom: 12px;
     }
 
-    button {
-      cursor: pointer;
-    }
+    button { cursor: pointer; }
 
     .reload-btn {
       padding: 6px 12px;
@@ -185,9 +177,7 @@
       white-space: nowrap;
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+    tr:last-child td { border-bottom: none; }
 
     .table-card-wrap {
       border-radius: 12px;
@@ -208,9 +198,7 @@
       margin: 0;
     }
 
-    .items-list li {
-      margin-bottom: 2px;
-    }
+    .items-list li { margin-bottom: 2px; }
 
     .status-select {
       font-size: 12px;
@@ -228,25 +216,10 @@
       margin-top: 4px;
     }
 
-    .status-new {
-      background: #fff7e6;
-      color: #ad6800;
-    }
-
-    .status-preparing {
-      background: #e6f7ff;
-      color: #0050b3;
-    }
-
-    .status-ready {
-      background: #f6ffed;
-      color: #237804;
-    }
-
-    .status-done {
-      background: #f5f5f5;
-      color: #595959;
-    }
+    .status-new       { background: #fff7e6; color: #ad6800; }
+    .status-preparing { background: #e6f7ff; color: #0050b3; }
+    .status-ready     { background: #f6ffed; color: #237804; }
+    .status-done      { background: #f5f5f5; color: #595959; }
 
     .no-data {
       padding: 16px;
@@ -302,8 +275,30 @@
       cursor: pointer;
     }
 
-    .hidden {
-      display: none;
+    .hidden { display: none; }
+
+    .item-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    /* カテゴリ管理パネル */
+    .category-panel {
+      margin-top: 24px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+    .category-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .category-note {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 8px;
     }
 
     /* スマホ時はサイドバーを上に押しつぶす */
@@ -317,22 +312,11 @@
         border-bottom: 1px solid #eee;
       }
     }
-
-    .item-thumb {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-
-    
   </style>
 </head>
 <body>
   <div class="layout">
-
-    <!-- ===== 左サイドバー（ダミーメニュー） ===== -->
+    <!-- ===== 左サイドバー ===== -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-title">夜食取り置き 管理</div>
@@ -383,34 +367,51 @@
           <button id="reloadItemsBtn" class="reload-btn">🔄 更新</button>
         </div>
 
+        <!-- 商品追加フォーム -->
         <form id="itemForm" class="item-form">
-  <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
-  <input id="itemPriceInput" type="number" min="0" placeholder="価格 例）240" required />
+          <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
+          <input id="itemPriceInput" type="number" min="0" placeholder="価格 例）240" required />
+          <input id="itemImageInput" type="file" accept="image/*" />
 
-  <!-- ★ 画像ファイル入力を追加 -->
-  <input id="itemImageInput" type="file" accept="image/*" />
-          <select id="itemCategorySelect" required>
-            <option value="">カテゴリ</option>
-            <option value="hotsnack">ホットスナック</option>
-            <option value="drink">飲料</option>
-            <option value="bread">パン</option>
-            <option value="limited">取り置き限定</option>
+          <select id="itemCategory1Select" required>
+            <option value="">カテゴリ1（大ジャンル）</option>
           </select>
+
+          <select id="itemCategory2Select">
+            <option value="">カテゴリ2（サブジャンル / 任意）</option>
+          </select>
+
           <button type="submit">＋ 商品追加</button>
         </form>
 
         <div class="item-small">
-          ※ ここで追加した商品が、フロント側のメニューに反映される想定。
+          ※ カテゴリ1は必須。カテゴリ2は任意。フロント側のメニューはカテゴリ1→カテゴリ2の順で並べる想定。
         </div>
 
         <div class="table-card-wrap">
           <div id="itemsTableWrap"></div>
         </div>
+
+        <!-- カテゴリ管理 -->
+        <div class="category-panel">
+          <div class="category-title">カテゴリ管理（Firestore: categories）</div>
+          <div class="category-note">
+            ・親なしで登録すると「カテゴリ1」になる。<br/>
+            ・親を選んで登録すると、その下の「カテゴリ2」になるイメージ。
+          </div>
+          <form id="categoryForm" class="item-form">
+            <input id="categoryNameInput" type="text" placeholder="カテゴリ名 例）炭酸 / コーヒー" required />
+            <select id="categoryParentSelect">
+              <option value="">親カテゴリなし（カテゴリ1）</option>
+            </select>
+            <button type="submit">＋ カテゴリ追加</button>
+          </form>
+        </div>
       </section>
     </main>
   </div>
 
-  <!-- ========= ここから下は JavaScript（ロジック） ========= -->
+  <!-- ========= JavaScript ========= -->
   <script type="module">
     // ================= Firebase 読み込み =================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
@@ -426,25 +427,13 @@
       orderBy
     } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-
-
-
-// ★これを追加
-  import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL,
-    deleteObject
-  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
-
-
-
-
-    
-
-
-    
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL,
+      deleteObject
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
 
     // ================= Firebase 初期化 ====================
     const firebaseConfig = {
@@ -457,8 +446,8 @@
       measurementId: "G-0WLVED7GQF"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+    const app     = initializeApp(firebaseConfig);
+    const db      = getFirestore(app);
     const storage = getStorage(app);
 
     // ================= DOM 参照 ==========================
@@ -466,7 +455,6 @@
     const reloadBtn      = document.getElementById("reloadBtn");
     const filterButtons  = document.querySelectorAll(".status-filter-btn");
 
-    // タブ関連
     const tabOrders      = document.getElementById("tabOrders");
     const tabItems       = document.getElementById("tabItems");
     const ordersSection  = document.getElementById("ordersSection");
@@ -478,22 +466,26 @@
     const itemForm           = document.getElementById("itemForm");
     const itemNameInput      = document.getElementById("itemNameInput");
     const itemPriceInput     = document.getElementById("itemPriceInput");
-    const itemCategorySelect = document.getElementById("itemCategorySelect");
     const itemImageInput     = document.getElementById("itemImageInput");
+    const itemCategory1Select= document.getElementById("itemCategory1Select");
+    const itemCategory2Select= document.getElementById("itemCategory2Select");
 
-    // ================= 状態（メモリ上のデータ） ============
-    let allOrders = [];
-    let currentFilter = "all";
+    // カテゴリ管理用
+    const categoryForm        = document.getElementById("categoryForm");
+    const categoryNameInput   = document.getElementById("categoryNameInput");
+    const categoryParentSelect= document.getElementById("categoryParentSelect");
 
-    let allItems = []; // 商品マスタ
+    // ================= 状態 =============================
+    let allOrders      = [];
+    let currentFilter  = "all";
+    let allItems       = [];
+    let allCategories  = [];
 
     // ==================== ステータス更新 ====================
     async function updateStatus(orderId, newStatus) {
       try {
         const orderRef = doc(db, "orders", orderId);
-        await updateDoc(orderRef, {
-          status: newStatus
-        });
+        await updateDoc(orderRef, { status: newStatus });
         console.log("ステータス更新:", orderId, newStatus);
       } catch (err) {
         console.error("ステータス更新エラー:", err);
@@ -517,7 +509,7 @@
           ...docSnap.data()
         }));
 
-        renderTable();
+        renderOrderTable();
       } catch (err) {
         console.error("orders 読み込みエラー:", err);
         tableWrap.innerHTML = "<div class='no-data'>読み込みに失敗しました。</div>";
@@ -525,7 +517,7 @@
     }
 
     // ========== 注文テーブル描画 ==========
-    function renderTable() {
+    function renderOrderTable() {
       const filtered = allOrders.filter(order => {
         if (currentFilter === "all") return true;
         return order.status === currentFilter;
@@ -544,9 +536,9 @@
           ? `${created.getMonth() + 1}/${created.getDate()} ${String(created.getHours()).padStart(2,"0")}:${String(created.getMinutes()).padStart(2,"0")}`
           : "-";
 
-        const itemsHtml = (order.items || []).map(it => {
-          return `<li>${it.name} × ${it.qty}（¥${it.price}）</li>`;
-        }).join("");
+        const itemsHtml = (order.items || []).map(it =>
+          `<li>${it.name} × ${it.qty}（¥${it.price}）</li>`
+        ).join("");
 
         const total = order.total ?? 0;
 
@@ -606,7 +598,6 @@
         </table>
       `;
 
-      // セレクトにイベントを付ける
       tableWrap.querySelectorAll(".status-select").forEach(select => {
         select.addEventListener("change", async () => {
           const tr = select.closest("tr");
@@ -634,6 +625,46 @@
       });
     }
 
+    // ========== カテゴリ読み込み & セレクト反映 ==========
+    async function loadCategories() {
+      try {
+        const snap = await getDocs(collection(db, "categories"));
+        allCategories = snap.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }));
+        renderCategorySelects();
+      } catch (err) {
+        console.error("categories 読み込みエラー:", err);
+      }
+    }
+
+    function renderCategorySelects() {
+      // 親なし = カテゴリ1
+      const topLevel = allCategories.filter(c => !c.parentId);
+
+      // 親セレクト（カテゴリ追加用）
+      categoryParentSelect.innerHTML =
+        `<option value="">親カテゴリなし（カテゴリ1）</option>` +
+        topLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+
+      // 商品フォームのカテゴリ1
+      itemCategory1Select.innerHTML =
+        `<option value="">カテゴリ1（大ジャンル）</option>` +
+        topLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+
+      // 商品フォームのカテゴリ2（カテゴリ1に応じて絞り込み）
+      const parentId = itemCategory1Select.value;
+      const secondLevel = allCategories.filter(c => c.parentId === parentId);
+
+      itemCategory2Select.innerHTML =
+        `<option value="">カテゴリ2（サブジャンル / 任意）</option>` +
+        secondLevel.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+    }
+
+    // カテゴリ1変更時にカテゴリ2を更新
+    itemCategory1Select.addEventListener("change", renderCategorySelects);
+
     // ========== 商品マスタ：読み込み ==========
     async function loadItems() {
       itemsTableWrap.innerHTML = "<div class='no-data'>読み込み中...</div>";
@@ -657,37 +688,42 @@
         return;
       }
 
-          const rowsHtml = allItems.map(item => `
-      <tr data-id="${item.id}">
-        <td>${item.name || "-"}</td>
-        <td>
-          ${
-            item.imageUrl
-              ? `<img src="${item.imageUrl}" class="item-thumb" alt="${item.name}">`
-              : "-"
-          }
-        </td>
-        <td>¥${(item.price ?? 0).toLocaleString()}</td>
-        <td>${item.category || "-"}</td>
-        <td>
-          <button class="danger-btn item-delete-btn" data-id="${item.id}">削除</button>
-        </td>
-      </tr>
-    `).join("");
+      const rowsHtml = allItems.map(item => {
+        const cat1Name = item.category1Name || item.category || "-"; // 旧データも一応表示
+        const cat2Name = item.category2Name || "";
 
-
-          itemsTableWrap.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>商品名</th>
-            <th>画像</th>
-            <th>価格</th>
-            <th>カテゴリ</th>
-            <th></th>
+        return `
+          <tr data-id="${item.id}">
+            <td>${item.name || "-"}</td>
+            <td>
+              ${
+                item.imageUrl
+                  ? `<img src="${item.imageUrl}" class="item-thumb" alt="${item.name}">`
+                  : "-"
+              }
+            </td>
+            <td>¥${(item.price ?? 0).toLocaleString()}</td>
+            <td>${cat1Name}</td>
+            <td>${cat2Name || "-"}</td>
+            <td>
+              <button class="danger-btn item-delete-btn" data-id="${item.id}">削除</button>
+            </td>
           </tr>
-        </thead>
+        `;
+      }).join("");
 
+      itemsTableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>商品名</th>
+              <th>画像</th>
+              <th>価格</th>
+              <th>カテゴリ1</th>
+              <th>カテゴリ2</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody>
             ${rowsHtml}
           </tbody>
@@ -699,34 +735,36 @@
           const id = btn.dataset.id;
           if (!confirm("この商品を削除しますか？")) return;
 
-                  try {
-          // Storage の画像も削除（あれば）
-          const imgRef = ref(storage, `items/${id}`);
-          await deleteObject(imgRef).catch(() => {}); // 無くてもエラー無視
+          try {
+            // Storage の画像も削除（あれば）
+            const imgRef = ref(storage, `items/${id}`);
+            await deleteObject(imgRef).catch(() => {}); // 無くてもエラー無視
 
-          await deleteDoc(doc(db, "items", id));
-          allItems = allItems.filter(i => i.id !== id);
-          renderItemsTable();
-        } catch (err) {
-          console.error("商品削除エラー:", err);
-          alert("商品の削除に失敗しました。");
-        }
-
+            await deleteDoc(doc(db, "items", id));
+            allItems = allItems.filter(i => i.id !== id);
+            renderItemsTable();
+          } catch (err) {
+            console.error("商品削除エラー:", err);
+            alert("商品の削除に失敗しました。");
+          }
         });
       });
     }
 
     // ========== イベント ==========
+
+    // 注文側
     reloadBtn.addEventListener("click", loadOrders);
     filterButtons.forEach(btn => {
       btn.addEventListener("click", () => {
         filterButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentFilter = btn.dataset.status;
-        renderTable();
+        renderOrderTable();
       });
     });
 
+    // タブ切り替え
     tabOrders.addEventListener("click", () => {
       tabOrders.classList.add("active");
       tabItems.classList.remove("active");
@@ -739,54 +777,88 @@
       tabOrders.classList.remove("active");
       ordersSection.classList.add("hidden");
       itemsSection.classList.remove("hidden");
+      // 商品タブ開いたタイミングで読み込み
+      loadCategories();
       loadItems();
     });
 
-    reloadItemsBtn.addEventListener("click", loadItems);
+    // 商品マスタ：更新ボタン
+    reloadItemsBtn.addEventListener("click", () => {
+      loadCategories();
+      loadItems();
+    });
 
-      // 商品追加フォーム
-  itemForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name     = itemNameInput.value.trim();
-    const price    = Number(itemPriceInput.value);
-    const category = itemCategorySelect.value;
-    const file     = itemImageInput.files[0] || null;
+    // 商品追加フォーム
+    itemForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name  = itemNameInput.value.trim();
+      const price = Number(itemPriceInput.value);
+      const file  = itemImageInput.files[0] || null;
 
-    if (!name || !price || !category) {
-      alert("商品名・価格・カテゴリを入力してください。");
-      return;
-    }
+      const category1Id = itemCategory1Select.value || null;
+      const category2Id = itemCategory2Select.value || null;
 
-    try {
-      // 1. まず Firestore に商品ドキュメントを追加（画像なしで）
-      const docRef = await addDoc(collection(db, "items"), {
-        name,
-        price,
-        category
-      });
-
-      // 2. 画像が選ばれていれば Storage にアップロードして URL を保存
-      if (file) {
-        const storageRef = ref(storage, `items/${docRef.id}`); // items/ドキュメントID
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-
-        await updateDoc(docRef, {
-          imageUrl: url
-        });
+      if (!name || !price || !category1Id) {
+        alert("商品名・価格・カテゴリ1を入力してください。");
+        return;
       }
 
-      // フォームリセット & 再読み込み
-      itemForm.reset();
-      loadItems();
-    } catch (err) {
-      console.error("商品追加エラー:", err);
-      alert("商品の追加に失敗しました。");
-    }
-  });
+      const cat1 = allCategories.find(c => c.id === category1Id) || null;
+      const cat2 = allCategories.find(c => c.id === category2Id) || null;
 
+      try {
+        // 1. Firestore に商品ドキュメント追加
+        const docRef = await addDoc(collection(db, "items"), {
+          name,
+          price,
+          category1Id,
+          category1Name: cat1?.name || "",
+          category2Id,
+          category2Name: cat2?.name || ""
+        });
 
-    // 初回読み込み
+        // 2. 画像があれば Storage にアップロード → URL を保存
+        if (file) {
+          const storageRef = ref(storage, `items/${docRef.id}`);
+          await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(storageRef);
+          await updateDoc(docRef, { imageUrl: url });
+        }
+
+        itemForm.reset();
+        renderCategorySelects(); // セレクトを初期化
+        loadItems();
+      } catch (err) {
+        console.error("商品追加エラー:", err);
+        alert("商品の追加に失敗しました。");
+      }
+    });
+
+    // カテゴリ追加フォーム
+    categoryForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = categoryNameInput.value.trim();
+      const parentId = categoryParentSelect.value || null;
+
+      if (!name) {
+        alert("カテゴリ名を入力してください。");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "categories"), {
+          name,
+          parentId
+        });
+        categoryForm.reset();
+        await loadCategories();
+      } catch (err) {
+        console.error("カテゴリ追加エラー:", err);
+        alert("カテゴリの追加に失敗しました。");
+      }
+    });
+
+    // 初回：注文だけ読み込み（商品タブを開いたら商品 & カテゴリを読み込む）
     loadOrders();
   </script>
 </body>
