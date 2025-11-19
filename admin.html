@@ -5,27 +5,128 @@
   <title>夜食取り置き 管理画面</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #f5f5f5;
-      margin: 0;
-      padding: 16px;
       color: #111;
     }
 
-    h1 {
-      font-size: 20px;
+    /* ========= レイアウト全体（Timee風） ========= */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 左サイドバー */
+    .sidebar {
+      width: 220px;
+      background: #ffffff;
+      border-right: 1px solid #e5e5e5;
+      padding: 16px 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-header {
+      padding: 0 20px 8px;
+      border-bottom: 1px solid #f0f0f0;
       margin-bottom: 8px;
     }
 
-    .sub {
-      font-size: 12px;
-      color: #666;
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .sidebar-sub {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 2px;
+    }
+
+    .sidebar-link {
+      display: block;
+      padding: 8px 20px;
+      font-size: 13px;
+      color: #444;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-link.active {
+      background: #f5f7ff;
+      border-left-color: #2f54eb;
+      color: #2f54eb;
+      font-weight: 600;
+    }
+
+    /* メインコンテンツ */
+    .main {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-x: auto;
+    }
+
+    .page-header {
       margin-bottom: 16px;
     }
 
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 12px;
+      color: #777;
+    }
+
+    /* タブ（注文一覧 / 商品マスタ） */
+    .nav-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      background: #ffffff;
+      border-radius: 999px;
+      border: 1px solid #e5e5e5;
+      margin-bottom: 16px;
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      font-size: 12px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .nav-tab.active {
+      background: #111;
+      color: #fff;
+    }
+
+    /* ツールバー */
     .toolbar {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       align-items: center;
       margin-bottom: 12px;
@@ -57,24 +158,23 @@
       border-color: #111;
     }
 
+    /* テーブル（Timee 風） */
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
       background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
     }
 
     thead {
-      background: #f3f3f3;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
     }
 
     th, td {
-      padding: 8px 6px;
-      border-bottom: 1px solid #eee;
-      vertical-align: top;
+      padding: 10px 12px;
+      vertical-align: middle;
+      border-bottom: 1px solid #f0f0f0;
     }
 
     th {
@@ -82,15 +182,24 @@
       font-weight: 600;
       font-size: 12px;
       color: #555;
+      white-space: nowrap;
     }
 
     tr:last-child td {
       border-bottom: none;
     }
 
+    .table-card-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      background: #fff;
+    }
+
     .order-id {
       font-family: monospace;
       font-size: 11px;
+      color: #888;
     }
 
     .items-list {
@@ -107,6 +216,8 @@
       font-size: 12px;
       padding: 4px 6px;
       border-radius: 6px;
+      border: 1px solid #ddd;
+      background: #fff;
     }
 
     .status-badge {
@@ -114,27 +225,27 @@
       padding: 2px 6px;
       border-radius: 999px;
       font-size: 11px;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .status-new {
-      background: #fff3cd;
-      color: #856404;
+      background: #fff7e6;
+      color: #ad6800;
     }
 
     .status-preparing {
-      background: #cce5ff;
-      color: #004085;
+      background: #e6f7ff;
+      color: #0050b3;
     }
 
     .status-ready {
-      background: #d4edda;
-      color: #155724;
+      background: #f6ffed;
+      color: #237804;
     }
 
     .status-done {
-      background: #e2e3e5;
-      color: #383d41;
+      background: #f5f5f5;
+      color: #595959;
     }
 
     .no-data {
@@ -142,34 +253,12 @@
       font-size: 13px;
       color: #666;
       text-align: center;
-    }
-
-
-
-
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .nav-tab {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid #ddd;
       background: #fff;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .nav-tab.active {
-      background: #111;
-      color: #fff;
-      border-color: #111;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
-    .hidden {
-      display: none;
-    }
-
+    /* 商品マスタ用フォーム */
     .item-form {
       display: flex;
       flex-wrap: wrap;
@@ -177,15 +266,18 @@
       margin-bottom: 12px;
       font-size: 12px;
     }
+
     .item-form input,
     .item-form select {
       padding: 6px 8px;
       font-size: 12px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      background: #fff;
     }
+
     .item-form button {
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid #111;
       background: #111;
@@ -193,416 +285,443 @@
       font-size: 12px;
       cursor: pointer;
     }
+
     .item-small {
       font-size: 11px;
       color: #666;
+      margin-bottom: 8px;
     }
+
     .danger-btn {
-      padding: 4px 8px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid #e55353;
-      background: #ffe5e5;
-      color: #a00;
+      border: 1px solid #ff7875;
+      background: #fff2f0;
+      color: #a8071a;
       font-size: 11px;
       cursor: pointer;
     }
 
+    .hidden {
+      display: none;
+    }
 
-
-
-
-
-
-
-    
+    /* スマホ時はサイドバーを上に押しつぶす */
+    @media (max-width: 768px) {
+      .layout {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+      }
+    }
   </style>
 </head>
 <body>
-    <h1>夜食取り置き 管理画面</h1>
-  <div class="sub">ローソン南部の里店 / Firestore 管理</div>
+  <div class="layout">
 
-  <!-- 🔽 タブ -->
-  <div class="nav-tabs">
-    <button id="tabOrders" class="nav-tab active">注文一覧</button>
-    <button id="tabItems" class="nav-tab">商品マスタ</button>
+    <!-- ===== 左サイドバー（ダミーメニュー） ===== -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">夜食取り置き 管理</div>
+        <div class="sidebar-sub">ローソン南部の里店</div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><span class="sidebar-link active">取り置き管理</span></li>
+        <li><span class="sidebar-link">売上レポート（将来）</span></li>
+        <li><span class="sidebar-link">スタッフ管理（将来）</span></li>
+      </ul>
+    </aside>
+
+    <!-- ===== メインエリア ===== -->
+    <main class="main">
+      <div class="page-header">
+        <div class="page-title">取り置き管理</div>
+        <div class="page-subtitle">Firestore 上の注文情報と商品マスタをまとめて管理</div>
+      </div>
+
+      <!-- タブ -->
+      <div class="nav-tabs">
+        <button id="tabOrders" class="nav-tab active">注文一覧</button>
+        <button id="tabItems" class="nav-tab">商品マスタ</button>
+      </div>
+
+      <!-- 注文セクション -->
+      <section id="ordersSection">
+        <div class="toolbar">
+          <button id="reloadBtn" class="reload-btn">🔄 更新</button>
+
+          <span style="font-size:12px;">ステータス絞り込み：</span>
+          <button class="status-filter-btn active" data-status="all">すべて</button>
+          <button class="status-filter-btn" data-status="new">new</button>
+          <button class="status-filter-btn" data-status="preparing">preparing</button>
+          <button class="status-filter-btn" data-status="ready">ready</button>
+          <button class="status-filter-btn" data-status="done">done</button>
+        </div>
+
+        <div class="table-card-wrap">
+          <div id="tableWrap"></div>
+        </div>
+      </section>
+
+      <!-- 商品マスタセクション -->
+      <section id="itemsSection" class="hidden">
+        <div class="toolbar">
+          <span style="font-size:12px;">商品マスタ（Firestore: items）</span>
+          <button id="reloadItemsBtn" class="reload-btn">🔄 更新</button>
+        </div>
+
+        <form id="itemForm" class="item-form">
+          <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
+          <!-- ★ step を削除したので 133円 など自由にOK -->
+          <input id="itemPriceInput" type="number" min="0" placeholder="価格 例）240" required />
+          <select id="itemCategorySelect" required>
+            <option value="">カテゴリ</option>
+            <option value="hotsnack">ホットスナック</option>
+            <option value="drink">飲料</option>
+            <option value="bread">パン</option>
+            <option value="limited">取り置き限定</option>
+          </select>
+          <button type="submit">＋ 商品追加</button>
+        </form>
+
+        <div class="item-small">
+          ※ ここで追加した商品が、フロント側のメニューに反映される想定。
+        </div>
+
+        <div class="table-card-wrap">
+          <div id="itemsTableWrap"></div>
+        </div>
+      </section>
+    </main>
   </div>
 
-  <!-- 🔽 注文セクション -->
-  <section id="ordersSection">
-    <div class="toolbar">
-      <button id="reloadBtn" class="reload-btn">🔄 更新</button>
+  <!-- ========= ここから下は JavaScript（ロジック） ========= -->
+  <script type="module">
+    // ================= Firebase 読み込み =================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      doc,
+      updateDoc,
+      addDoc,
+      deleteDoc,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-      <span style="font-size:12px;">ステータス絞り込み：</span>
-      <button class="status-filter-btn active" data-status="all">すべて</button>
-      <button class="status-filter-btn" data-status="new">new</button>
-      <button class="status-filter-btn" data-status="preparing">preparing</button>
-      <button class="status-filter-btn" data-status="ready">ready</button>
-      <button class="status-filter-btn" data-status="done">done</button>
-    </div>
+    // ================= Firebase 初期化 ====================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
+      authDomain: "myshop-nanbu.firebaseapp.com",
+      projectId: "myshop-nanbu",
+      storageBucket: "myshop-nanbu.firebasestorage.app",
+      messagingSenderId: "122308310474",
+      appId: "1:122308310474:web:44c10cd3709feb5eb14b33",
+      measurementId: "G-0WLVED7GQF"
+    };
 
-    <div id="tableWrap"></div>
-  </section>
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
 
-  <!-- 🔽 商品マスタセクション -->
-  <section id="itemsSection" class="hidden">
-    <div class="toolbar">
-      <span style="font-size:12px;">商品マスタ（Firestore: items）</span>
-      <button id="reloadItemsBtn" class="reload-btn">🔄 更新</button>
-    </div>
+    // ================= DOM 参照 ==========================
+    const tableWrap      = document.getElementById("tableWrap");
+    const reloadBtn      = document.getElementById("reloadBtn");
+    const filterButtons  = document.querySelectorAll(".status-filter-btn");
 
-    <!-- 追加フォーム -->
-    <form id="itemForm" class="item-form">
-      <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
-      <input id="itemPriceInput" type="number" min="0" placeholder="価格 例）240" required />
-      <select id="itemCategorySelect" required>
-        <option value="">カテゴリ</option>
-        <option value="hotsnack">ホットスナック</option>
-        <option value="drink">飲料</option>
-        <option value="bread">パン</option>
-        <option value="limited">取り置き限定</option>
-      </select>
-      <button type="submit">＋ 商品追加</button>
-    </form>
+    // タブ関連
+    const tabOrders      = document.getElementById("tabOrders");
+    const tabItems       = document.getElementById("tabItems");
+    const ordersSection  = document.getElementById("ordersSection");
+    const itemsSection   = document.getElementById("itemsSection");
 
-    <div class="item-small">※ ここで追加した商品が、フロント側のメニューに反映される想定。</div>
-    <br />
-    <div id="itemsTableWrap"></div>
-  </section>
+    // 商品マスタ用
+    const reloadItemsBtn     = document.getElementById("reloadItemsBtn");
+    const itemsTableWrap     = document.getElementById("itemsTableWrap");
+    const itemForm           = document.getElementById("itemForm");
+    const itemNameInput      = document.getElementById("itemNameInput");
+    const itemPriceInput     = document.getElementById("itemPriceInput");
+    const itemCategorySelect = document.getElementById("itemCategorySelect");
 
+    // ================= 状態（メモリ上のデータ） ============
+    let allOrders = [];
+    let currentFilter = "all";
 
-    <script type="module">
-  // ================= Firebase 読み込み =================
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    getDocs,
-    doc,
-    updateDoc,
-    addDoc,
-    deleteDoc,
-    query,
-    orderBy
-  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+    let allItems = []; // 商品マスタ
 
-  // ================= Firebase 初期化 ====================
-  const firebaseConfig = {
-    apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
-    authDomain: "myshop-nanbu.firebaseapp.com",
-    projectId: "myshop-nanbu",
-    storageBucket: "myshop-nanbu.firebasestorage.app",
-    messagingSenderId: "122308310474",
-    appId: "1:122308310474:web:44c10cd3709feb5eb14b33",
-    measurementId: "G-0WLVED7GQF"
-  };
+    // ==================== ステータス更新 ====================
+    async function updateStatus(orderId, newStatus) {
+      try {
+        const orderRef = doc(db, "orders", orderId);
+        await updateDoc(orderRef, {
+          status: newStatus
+        });
+        console.log("ステータス更新:", orderId, newStatus);
+      } catch (err) {
+        console.error("ステータス更新エラー:", err);
+        alert("ステータスの更新に失敗しました。");
+      }
+    }
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+    // ========== 注文の読み込み ==========
+    async function loadOrders() {
+      tableWrap.innerHTML = "<div class='no-data'>読み込み中...</div>";
 
-  // ================= DOM 参照 ==========================
-  const tableWrap      = document.getElementById("tableWrap");
-  const reloadBtn      = document.getElementById("reloadBtn");
-  const filterButtons  = document.querySelectorAll(".status-filter-btn");
+      try {
+        const q = query(
+          collection(db, "orders"),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(q);
 
-  // タブ関連
-  const tabOrders      = document.getElementById("tabOrders");
-  const tabItems       = document.getElementById("tabItems");
-  const ordersSection  = document.getElementById("ordersSection");
-  const itemsSection   = document.getElementById("itemsSection");
+        allOrders = snap.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }));
 
-  // 商品マスタ用
-  const reloadItemsBtn     = document.getElementById("reloadItemsBtn");
-  const itemsTableWrap     = document.getElementById("itemsTableWrap");
-  const itemForm           = document.getElementById("itemForm");
-  const itemNameInput      = document.getElementById("itemNameInput");
-  const itemPriceInput     = document.getElementById("itemPriceInput");
-  const itemCategorySelect = document.getElementById("itemCategorySelect");
+        renderTable();
+      } catch (err) {
+        console.error("orders 読み込みエラー:", err);
+        tableWrap.innerHTML = "<div class='no-data'>読み込みに失敗しました。</div>";
+      }
+    }
 
-  // ================= 状態（メモリ上のデータ） ============
-  let allOrders = [];
-  let currentFilter = "all";
-
-  let allItems = []; // 商品マスタ
-
-  // ==================== ステータス更新 ====================
-  async function updateStatus(orderId, newStatus) {
-    try {
-      const orderRef = doc(db, "orders", orderId);
-      await updateDoc(orderRef, {
-        status: newStatus
+    // ========== 注文テーブル描画 ==========
+    function renderTable() {
+      const filtered = allOrders.filter(order => {
+        if (currentFilter === "all") return true;
+        return order.status === currentFilter;
       });
-      console.log("ステータス更新:", orderId, newStatus);
-    } catch (err) {
-      console.error("ステータス更新エラー:", err);
-      alert("ステータスの更新に失敗しました。");
-    }
-  }
 
-  // ========== 注文の読み込み ==========
-  async function loadOrders() {
-    tableWrap.innerHTML = "<div class='no-data'>読み込み中...</div>";
+      if (filtered.length === 0) {
+        tableWrap.innerHTML = "<div class='no-data'>注文データがありません。</div>";
+        return;
+      }
 
-    try {
-      const q = query(
-        collection(db, "orders"),
-        orderBy("createdAt", "desc")
-      );
-      const snap = await getDocs(q);
+      const rowsHtml = filtered.map(order => {
+        const created = order.createdAt?.toDate
+          ? order.createdAt.toDate()
+          : null;
+        const dateStr = created
+          ? `${created.getMonth() + 1}/${created.getDate()} ${String(created.getHours()).padStart(2,"0")}:${String(created.getMinutes()).padStart(2,"0")}`
+          : "-";
 
-      allOrders = snap.docs.map(docSnap => ({
-        id: docSnap.id,
-        ...docSnap.data()
-      }));
+        const itemsHtml = (order.items || []).map(it => {
+          return `<li>${it.name} × ${it.qty}（¥${it.price}）</li>`;
+        }).join("");
 
-      renderTable();
-    } catch (err) {
-      console.error("orders 読み込みエラー:", err);
-      tableWrap.innerHTML = "<div class='no-data'>読み込みに失敗しました。</div>";
-    }
-  }
+        const total = order.total ?? 0;
 
-  // ========== 注文テーブル描画 ==========
-  function renderTable() {
-    const filtered = allOrders.filter(order => {
-      if (currentFilter === "all") return true;
-      return order.status === currentFilter;
-    });
+        const statusBadgeClass =
+          order.status === "new"       ? "status-new" :
+          order.status === "preparing" ? "status-preparing" :
+          order.status === "ready"     ? "status-ready" :
+          order.status === "done"      ? "status-done" : "";
 
-    if (filtered.length === 0) {
-      tableWrap.innerHTML = "<div class='no-data'>注文データがありません。</div>";
-      return;
-    }
-
-    const rowsHtml = filtered.map(order => {
-      const created = order.createdAt?.toDate
-        ? order.createdAt.toDate()
-        : null;
-      const dateStr = created
-        ? `${created.getMonth() + 1}/${created.getDate()} ${String(created.getHours()).padStart(2,"0")}:${String(created.getMinutes()).padStart(2,"0")}`
-        : "-";
-
-      const itemsHtml = (order.items || []).map(it => {
-        return `<li>${it.name} × ${it.qty}（¥${it.price}）</li>`;
+        return `
+          <tr data-id="${order.id}">
+            <td>
+              <div>${dateStr}</div>
+              <div class="order-id">${order.id}</div>
+            </td>
+            <td>
+              ${order.customerName || "-"}<br>
+              <span style="font-size:11px;color:#666;">${order.tel || ""}</span>
+            </td>
+            <td>${order.pickupTime || "-"}</td>
+            <td>
+              <ul class="items-list">
+                ${itemsHtml}
+              </ul>
+            </td>
+            <td>¥${total}</td>
+            <td>
+              <select class="status-select">
+                <option value="new"       ${order.status === "new"       ? "selected" : ""}>new</option>
+                <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>preparing</option>
+                <option value="ready"     ${order.status === "ready"     ? "selected" : ""}>ready</option>
+                <option value="done"      ${order.status === "done"      ? "selected" : ""}>done</option>
+              </select>
+              <div class="status-badge ${statusBadgeClass}">
+                ${order.status || "-"}
+              </div>
+            </td>
+          </tr>
+        `;
       }).join("");
 
-      const total = order.total ?? 0;
+      tableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>時間 / 注文ID</th>
+              <th>お客様</th>
+              <th>受け取り時間</th>
+              <th>内容</th>
+              <th>合計</th>
+              <th>ステータス</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      `;
 
-      const statusBadgeClass =
-        order.status === "new"       ? "status-new" :
-        order.status === "preparing" ? "status-preparing" :
-        order.status === "ready"     ? "status-ready" :
-        order.status === "done"      ? "status-done" : "";
+      // セレクトにイベントを付ける
+      tableWrap.querySelectorAll(".status-select").forEach(select => {
+        select.addEventListener("change", async () => {
+          const tr = select.closest("tr");
+          const id = tr.dataset.id;
+          const newStatus = select.value;
 
-      return `
-        <tr data-id="${order.id}">
+          try {
+            await updateStatus(id, newStatus);
+
+            const target = allOrders.find(o => o.id === id);
+            if (target) target.status = newStatus;
+
+            const badge = tr.querySelector(".status-badge");
+            badge.textContent = newStatus;
+            badge.className = "status-badge " +
+              (newStatus === "new"       ? "status-new" :
+               newStatus === "preparing" ? "status-preparing" :
+               newStatus === "ready"     ? "status-ready" :
+               newStatus === "done"      ? "status-done" : "");
+          } catch (err) {
+            console.error("ステータス更新エラー:", err);
+            alert("ステータスの更新に失敗しました。");
+          }
+        });
+      });
+    }
+
+    // ========== 商品マスタ：読み込み ==========
+    async function loadItems() {
+      itemsTableWrap.innerHTML = "<div class='no-data'>読み込み中...</div>";
+      try {
+        const snap = await getDocs(collection(db, "items"));
+        allItems = snap.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }));
+        renderItemsTable();
+      } catch (err) {
+        console.error("items 読み込みエラー:", err);
+        itemsTableWrap.innerHTML = "<div class='no-data'>読み込みに失敗しました。</div>";
+      }
+    }
+
+    // ========== 商品マスタ：テーブル描画 ==========
+    function renderItemsTable() {
+      if (!allItems.length) {
+        itemsTableWrap.innerHTML = "<div class='no-data'>商品が登録されていません。</div>";
+        return;
+      }
+
+      const rowsHtml = allItems.map(item => `
+        <tr data-id="${item.id}">
+          <td>${item.name || "-"}</td>
+          <td>¥${(item.price ?? 0).toLocaleString()}</td>
+          <td>${item.category || "-"}</td>
           <td>
-            <div>${dateStr}</div>
-            <div class="order-id">${order.id}</div>
-          </td>
-          <td>
-            ${order.customerName || "-"}<br>
-            <span style="font-size:11px;color:#666;">${order.tel || ""}</span>
-          </td>
-          <td>${order.pickupTime || "-"}</td>
-          <td>
-            <ul class="items-list">
-              ${itemsHtml}
-            </ul>
-          </td>
-          <td>¥${total}</td>
-          <td>
-            <select class="status-select">
-              <option value="new"       ${order.status === "new"       ? "selected" : ""}>new</option>
-              <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>preparing</option>
-              <option value="ready"     ${order.status === "ready"     ? "selected" : ""}>ready</option>
-              <option value="done"      ${order.status === "done"      ? "selected" : ""}>done</option>
-            </select>
-            <div class="status-badge ${statusBadgeClass}">
-              ${order.status || "-"}
-            </div>
+            <button class="danger-btn item-delete-btn" data-id="${item.id}">削除</button>
           </td>
         </tr>
+      `).join("");
+
+      itemsTableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>商品名</th>
+              <th>価格</th>
+              <th>カテゴリ</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
       `;
-    }).join("");
 
-    tableWrap.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>時間 / 注文ID</th>
-            <th>お客様</th>
-            <th>受け取り時間</th>
-            <th>内容</th>
-            <th>合計</th>
-            <th>ステータス</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-    `;
+      itemsTableWrap.querySelectorAll(".item-delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.dataset.id;
+          if (!confirm("この商品を削除しますか？")) return;
 
-    // セレクトにイベントを付ける
-    tableWrap.querySelectorAll(".status-select").forEach(select => {
-      select.addEventListener("change", async () => {
-        const tr = select.closest("tr");
-        const id = tr.dataset.id;
-        const newStatus = select.value;
-
-        try {
-          // Firestore 更新は共通関数におまかせ
-          await updateStatus(id, newStatus);
-
-          // メモリ上のデータも更新
-          const target = allOrders.find(o => o.id === id);
-          if (target) target.status = newStatus;
-
-          // バッジの表示更新
-          const badge = tr.querySelector(".status-badge");
-          badge.textContent = newStatus;
-          badge.className = "status-badge " +
-            (newStatus === "new"       ? "status-new" :
-             newStatus === "preparing" ? "status-preparing" :
-             newStatus === "ready"     ? "status-ready" :
-             newStatus === "done"      ? "status-done" : "");
-
-        } catch (err) {
-          console.error("ステータス更新エラー:", err);
-          alert("ステータスの更新に失敗しました。");
-        }
+          try {
+            await deleteDoc(doc(db, "items", id));
+            allItems = allItems.filter(i => i.id !== id);
+            renderItemsTable();
+          } catch (err) {
+            console.error("商品削除エラー:", err);
+            alert("商品の削除に失敗しました。");
+          }
+        });
       });
-    });
-  }
-
-  // ========== 商品マスタ：読み込み ==========
-  async function loadItems() {
-    itemsTableWrap.innerHTML = "<div class='no-data'>読み込み中...</div>";
-    try {
-      const snap = await getDocs(collection(db, "items"));
-      allItems = snap.docs.map(docSnap => ({
-        id: docSnap.id,
-        ...docSnap.data()
-      }));
-      renderItemsTable();
-    } catch (err) {
-      console.error("items 読み込みエラー:", err);
-      itemsTableWrap.innerHTML = "<div class='no-data'>読み込みに失敗しました。</div>";
-    }
-  }
-
-  // ========== 商品マスタ：テーブル描画 ==========
-  function renderItemsTable() {
-    if (!allItems.length) {
-      itemsTableWrap.innerHTML = "<div class='no-data'>商品が登録されていません。</div>";
-      return;
     }
 
-    const rowsHtml = allItems.map(item => `
-      <tr data-id="${item.id}">
-        <td>${item.name || "-"}</td>
-        <td>¥${(item.price ?? 0).toLocaleString()}</td>
-        <td>${item.category || "-"}</td>
-        <td>
-          <button class="danger-btn item-delete-btn" data-id="${item.id}">削除</button>
-        </td>
-      </tr>
-    `).join("");
-
-    itemsTableWrap.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>商品名</th>
-            <th>価格</th>
-            <th>カテゴリ</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-    `;
-
-    // 削除ボタンのイベント
-    itemsTableWrap.querySelectorAll(".item-delete-btn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.dataset.id;
-        if (!confirm("この商品を削除しますか？")) return;
-
-        try {
-          await deleteDoc(doc(db, "items", id));
-          allItems = allItems.filter(i => i.id !== id);
-          renderItemsTable();
-        } catch (err) {
-          console.error("商品削除エラー:", err);
-          alert("商品の削除に失敗しました。");
-        }
+    // ========== イベント ==========
+    reloadBtn.addEventListener("click", loadOrders);
+    filterButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.status;
+        renderTable();
       });
     });
-  }
 
-  // ========== イベント ==========
-  // 注文側
-  reloadBtn.addEventListener("click", loadOrders);
-  filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentFilter = btn.dataset.status;
-      renderTable();
+    tabOrders.addEventListener("click", () => {
+      tabOrders.classList.add("active");
+      tabItems.classList.remove("active");
+      ordersSection.classList.remove("hidden");
+      itemsSection.classList.add("hidden");
     });
-  });
 
-  // タブ切り替え
-  tabOrders.addEventListener("click", () => {
-    tabOrders.classList.add("active");
-    tabItems.classList.remove("active");
-    ordersSection.classList.remove("hidden");
-    itemsSection.classList.add("hidden");
-  });
-
-  tabItems.addEventListener("click", () => {
-    tabItems.classList.add("active");
-    tabOrders.classList.remove("active");
-    ordersSection.classList.add("hidden");
-    itemsSection.classList.remove("hidden");
-    loadItems(); // 商品タブを開いたタイミングで読み込み
-  });
-
-  // 商品マスタ：更新ボタン
-  reloadItemsBtn.addEventListener("click", loadItems);
-
-  // 商品追加フォーム
-  itemForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name     = itemNameInput.value.trim();
-    const price    = Number(itemPriceInput.value);
-    const category = itemCategorySelect.value;
-
-    if (!name || !price || !category) {
-      alert("商品名・価格・カテゴリを入力してください。");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "items"), {
-        name,
-        price,
-        category
-      });
-      itemForm.reset();
+    tabItems.addEventListener("click", () => {
+      tabItems.classList.add("active");
+      tabOrders.classList.remove("active");
+      ordersSection.classList.add("hidden");
+      itemsSection.classList.remove("hidden");
       loadItems();
-    } catch (err) {
-      console.error("商品追加エラー:", err);
-      alert("商品の追加に失敗しました。");
-    }
-  });
+    });
 
-  // 初回読み込み
-  loadOrders();
+    reloadItemsBtn.addEventListener("click", loadItems);
+
+    itemForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name     = itemNameInput.value.trim();
+      const price    = Number(itemPriceInput.value);
+      const category = itemCategorySelect.value;
+
+      if (!name || !price || !category) {
+        alert("商品名・価格・カテゴリを入力してください。");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "items"), {
+          name,
+          price,
+          category
+        });
+        itemForm.reset();
+        loadItems();
+      } catch (err) {
+        console.error("商品追加エラー:", err);
+        alert("商品の追加に失敗しました。");
+      }
+    });
+
+    // 初回読み込み
+    loadOrders();
   </script>
-
 </body>
 </html>
