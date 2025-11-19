@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>夜食取り置き 管理画面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 16px;
+      color: #111;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .reload-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #ccc;
+      background: #fff;
+      font-size: 12px;
+    }
+
+    .status-filter-btn {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      background: #fff;
+      font-size: 12px;
+    }
+
+    .status-filter-btn.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    thead {
+      background: #f3f3f3;
+    }
+
+    th, td {
+      padding: 8px 6px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    th {
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      color: #555;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .order-id {
+      font-family: monospace;
+      font-size: 11px;
+    }
+
+    .items-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .items-list li {
+      margin-bottom: 2px;
+    }
+
+    .status-select {
+      font-size: 12px;
+      padding: 4px 6px;
+      border-radius: 6px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .status-new {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-preparing {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .status-ready {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-done {
+      background: #e2e3e5;
+      color: #383d41;
+    }
+
+    .no-data {
+      padding: 16px;
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>夜食取り置き 管理画面</h1>
+  <div class="sub">ローソン南部の里店 / Firestore: orders 一覧</div>
+
+  <div class="toolbar">
+    <button id="reloadBtn" class="reload-btn">🔄 更新</button>
+
+    <span style="font-size:12px;">ステータス絞り込み：</span>
+    <button class="status-filter-btn active" data-status="all">すべて</button>
+    <button class="status-filter-btn" data-status="new">new</button>
+    <button class="status-filter-btn" data-status="preparing">preparing</button>
+    <button class="status-filter-btn" data-status="ready">ready</button>
+    <button class="status-filter-btn" data-status="done">done</button>
+  </div>
+
+  <div id="tableWrap"></div>
+
+  <script type="module">
+    // ========== Firebase ==========
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      orderBy,
+      updateDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
+      authDomain: "myshop-nanbu.firebaseapp.com",
+      projectId: "myshop-nanbu",
+      storageBucket: "myshop-nanbu.firebasestorage.app",
+      messagingSenderId: "122308310474",
+      appId: "1:122308310474:web:44c10cd3709feb5eb14b33",
+      measurementId: "G-0WLVED7GQF"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const tableWrap = document.getElementById("tableWrap");
+    const reloadBtn = document.getElementById("reloadBtn");
+    const filterButtons = document.querySelectorAll(".status-filter-btn");
+
+    let allOrders = [];
+    let currentFilter = "all";
+
+    // ========== 注文の読み込み ==========
+    async function loadOrders() {
+      tableWrap.innerHTML = "<div class='no-data'>読み込み中...</div>";
+
+      try {
+        const q = query(
+          collection(db, "orders"),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(q);
+
+        allOrders = snap.docs.map(docSnap => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            ...data
+          };
+        });
+
+        renderTable();
+      } catch (err) {
+        console.error("orders 読み込みエラー:", err);
+        tableWrap.innerHTML = "<div class='no-data'>読み込みに失敗しました。</div>";
+      }
+    }
+
+    // ========== テーブル描画 ==========
+    function renderTable() {
+      const filtered = allOrders.filter(order => {
+        if (currentFilter === "all") return true;
+        return order.status === currentFilter;
+      });
+
+      if (filtered.length === 0) {
+        tableWrap.innerHTML = "<div class='no-data'>注文データがありません。</div>";
+        return;
+      }
+
+      const rowsHtml = filtered.map(order => {
+        const created = order.createdAt?.toDate
+          ? order.createdAt.toDate()
+          : null;
+        const dateStr = created
+          ? `${created.getMonth() + 1}/${created.getDate()} ${String(created.getHours()).padStart(2,"0")}:${String(created.getMinutes()).padStart(2,"0")}`
+          : "-";
+
+        const itemsHtml = (order.items || []).map(it => {
+          return `<li>${it.name} × ${it.qty}（¥${it.price}）</li>`;
+        }).join("");
+
+        const total = order.total ?? 0;
+
+        const statusBadgeClass =
+          order.status === "new" ? "status-new" :
+          order.status === "preparing" ? "status-preparing" :
+          order.status === "ready" ? "status-ready" :
+          order.status === "done" ? "status-done" : "";
+
+        return `
+          <tr data-id="${order.id}">
+            <td>
+              <div>${dateStr}</div>
+              <div class="order-id">${order.id}</div>
+            </td>
+            <td>
+              ${order.customerName || "-"}<br>
+              <span style="font-size:11px;color:#666;">${order.tel || ""}</span>
+            </td>
+            <td>${order.pickupTime || "-"}</td>
+            <td>
+              <ul class="items-list">
+                ${itemsHtml}
+              </ul>
+            </td>
+            <td>¥${total}</td>
+            <td>
+              <select class="status-select">
+                <option value="new" ${order.status === "new" ? "selected" : ""}>new</option>
+                <option value="preparing" ${order.status === "preparing" ? "selected" : ""}>preparing</option>
+                <option value="ready" ${order.status === "ready" ? "selected" : ""}>ready</option>
+                <option value="done" ${order.status === "done" ? "selected" : ""}>done</option>
+              </select>
+              <div class="status-badge ${statusBadgeClass}">
+                ${order.status || "-"}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      tableWrap.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>時間 / 注文ID</th>
+              <th>お客様</th>
+              <th>受け取り時間</th>
+              <th>内容</th>
+              <th>合計</th>
+              <th>ステータス</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      `;
+
+      // セレクトにイベントを付ける
+      tableWrap.querySelectorAll(".status-select").forEach(select => {
+        select.addEventListener("change", async () => {
+          const tr = select.closest("tr");
+          const id = tr.dataset.id;
+          const newStatus = select.value;
+
+          try {
+            await updateDoc(doc(db, "orders", id), {
+              status: newStatus
+            });
+
+            // メモリ上のデータも更新
+            const target = allOrders.find(o => o.id === id);
+            if (target) target.status = newStatus;
+
+            // バッジの表示更新
+            const badge = tr.querySelector(".status-badge");
+            badge.textContent = newStatus;
+            badge.className = "status-badge " +
+              (newStatus === "new" ? "status-new" :
+               newStatus === "preparing" ? "status-preparing" :
+               newStatus === "ready" ? "status-ready" :
+               newStatus === "done" ? "status-done" : "");
+
+          } catch (err) {
+            console.error("ステータス更新エラー:", err);
+            alert("ステータスの更新に失敗しました。");
+          }
+        });
+      });
+    }
+
+    // ========== イベント ==========
+    reloadBtn.addEventListener("click", loadOrders);
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.status;
+        renderTable();
+      });
+    });
+
+    // 初回読み込み
+    loadOrders();
+  </script>
+</body>
+</html>
