@@ -744,24 +744,34 @@ itemCategory1Select.addEventListener("change", renderCategory2Options);
       `;
 
       itemsTableWrap.querySelectorAll(".item-delete-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.dataset.id;
-          if (!confirm("この商品を削除しますか？")) return;
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-          try {
-            // Storage の画像も削除（あれば）
-            const imgRef = ref(storage, `items/${id}`);
-            await deleteObject(imgRef).catch(() => {}); // 無くてもエラー無視
+    const id = btn.dataset.id;
+    if (!confirm("この商品を削除しますか？")) return;
 
-            await deleteDoc(doc(db, "items", id));
-            allItems = allItems.filter(i => i.id !== id);
-            renderItemsTable();
-          } catch (err) {
-            console.error("商品削除エラー:", err);
-            alert("商品の削除に失敗しました。");
-          }
-        });
-      });
+    try {
+      // 画像がある商品だけ Storage 削除を試す
+      const target = allItems.find(i => i.id === id);
+      if (target && target.imageUrl) {
+        const imgRef = ref(storage, `items/${id}`);
+        await deleteObject(imgRef).catch(() => {});
+      }
+
+      // Firestore のドキュメント削除
+      await deleteDoc(doc(db, "items", id));
+
+      // ローカル配列からも削除して再描画
+      allItems = allItems.filter(i => i.id !== id);
+      renderItemsTable();
+    } catch (err) {
+      console.error("商品削除エラー:", err);
+      alert("商品の削除に失敗しました。");
+    }
+  });
+});
+
     }
 
     // ========== イベント ==========
