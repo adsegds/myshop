@@ -163,17 +163,16 @@
   <div id="tableWrap"></div>
 
   <script type="module">
-    // ========== Firebase ==========
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      query,
-      orderBy,
-      updateDoc,
-      doc
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+  // ================= Firebase 読み込み =================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,         // ★追加
+    updateDoc    // ★追加
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
 
     const firebaseConfig = {
       apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
