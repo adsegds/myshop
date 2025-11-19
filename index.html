@@ -975,6 +975,29 @@
   import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 
+
+
+// ==== カテゴリ2ごとにグループ分けするユーティリティ ====
+function groupByCategory2(items) {
+  const map = {};
+  for (const item of items) {
+    // category2Name が空なら「その他」にまとめる
+    const key = item.category2Name || "その他";
+    if (!map[key]) {
+      map[key] = [];
+    }
+    map[key].push(item);
+  }
+  return map; // { "炭酸": [item, item...], "大容量": [...], ... }
+}
+
+
+
+
+
+  
+
+
   // ★ さっきメモした firebaseConfig をそのまま使う
   const firebaseConfig = {
     apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
