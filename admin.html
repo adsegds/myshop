@@ -674,8 +674,9 @@ function renderCategory2Options() {
 }
 
 
-    // カテゴリ1変更時にカテゴリ2を更新
-    itemCategory1Select.addEventListener("change", renderCategorySelects);
+    // カテゴリ1変更時は、カテゴリ2だけ作り直す
+itemCategory1Select.addEventListener("change", renderCategory2Options);
+
 
     // ========== 商品マスタ：読み込み ==========
     async function loadItems() {
