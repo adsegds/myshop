@@ -702,7 +702,7 @@ itemCategory1Select.addEventListener("change", renderCategory2Options);
       }
 
       const rowsHtml = allItems.map(item => {
-        const cat1Name = item.category1Name || item.category || "-"; // 旧データも一応表示
+        const cat1Name = item.category1Name || "-";
         const cat2Name = item.category2Name || "";
 
         return `
