@@ -374,9 +374,11 @@
         </div>
 
         <form id="itemForm" class="item-form">
-          <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
-          <!-- ★ step を削除したので 133円 など自由にOK -->
-          <input id="itemPriceInput" type="number" min="0" placeholder="価格 例）240" required />
+  <input id="itemNameInput" type="text" placeholder="商品名 例）からあげクン レギュラー" required />
+  <input id="itemPriceInput" type="number" min="0" placeholder="価格 例）240" required />
+
+  <!-- ★ 画像ファイル入力を追加 -->
+  <input id="itemImageInput" type="file" accept="image/*" />
           <select id="itemCategorySelect" required>
             <option value="">カテゴリ</option>
             <option value="hotsnack">ホットスナック</option>
