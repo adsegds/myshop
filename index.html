@@ -734,6 +734,26 @@
 
 
 
+/* ===== 飲料タブ：カテゴリ2ごとに縦セクションにする用 ===== */
+#itemList.grouped {
+  display: block;  /* もともとの grid を無効化して、縦並びにする */
+}
+
+.front-category-section {
+  margin-bottom: 24px;
+}
+
+.front-category-heading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 4px 2px 8px;
+}
+
+.front-category-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
 
 
 
