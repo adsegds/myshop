@@ -414,6 +414,26 @@
       orderBy
     } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
+
+
+
+// ★これを追加
+  import {
+    getStorage,
+    ref,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+  } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
+
+
+
+
+    
+
+
+    
+
     // ================= Firebase 初期化 ====================
     const firebaseConfig = {
       apiKey: "AIzaSyDYJrgcp9nhyNn2ZR-DMIn1C_Lk_Em6lZo",
@@ -427,6 +447,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
+    const storage = getStorage(app);
 
     // ================= DOM 参照 ==========================
     const tableWrap      = document.getElementById("tableWrap");
