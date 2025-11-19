@@ -329,9 +329,9 @@ async function updateStatus(orderId, newStatus) {
           const newStatus = select.value;
 
           try {
-            await updateDoc(doc(db, "orders", id), {
-              status: newStatus
-            });
+  // ★ここだけ書き換える
+  await updateStatus(id, newStatus);
+
 
             // メモリ上のデータも更新
             const target = allOrders.find(o => o.id === id);
