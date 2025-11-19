@@ -839,8 +839,10 @@ itemCategory1Select.addEventListener("change", renderCategory2Options);
         }
 
         itemForm.reset();
-        renderCategorySelects(); // セレクトを初期化
-        loadItems();
+// カテゴリ1が空になるので、それに合わせてカテゴリ2だけ初期化
+renderCategory2Options();
+loadItems();
+
       } catch (err) {
         console.error("商品追加エラー:", err);
         alert("商品の追加に失敗しました。");
