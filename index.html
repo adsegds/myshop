@@ -1271,15 +1271,16 @@ function renderItems() {
     card.className = "home-item-card";
 
     card.innerHTML = `
-      <div class="home-thumb-wrap">
-        <span>写真</span>
-        <button class="home-plus-btn" data-id="${item.id}">＋</button>
-      </div>
-      <div class="home-item-info">
-        <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
-        <div class="home-item-name">${item.name}</div>
-      </div>
-    `;
+  <div class="home-thumb-wrap">
+    <img src="${item.imageUrl}" alt="${item.name}">
+    <button class="home-plus-btn" data-id="${item.id}">＋</button>
+  </div>
+  <div class="home-item-info">
+    <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
+    <div class="home-item-name">${item.name}</div>
+  </div>
+`;
+
 
     itemListEl.appendChild(card);
   });
