@@ -1755,6 +1755,40 @@ async function handleOrder() {
   cartButton.addEventListener("click", showCartView);
   cartBarInner.addEventListener("click", showCartView);
 
+
+
+
+// ★ ここから追加：検索バーイベント ★
+
+  // PC：検索ボタン or Enter で検索
+  searchBtn.addEventListener("click", () => {
+    runSearch();
+  });
+
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      runSearch();
+    }
+  });
+
+  // スマホ：右上の虫眼鏡で開閉
+  searchIconBtn.addEventListener("click", () => {
+    headerSearchRow.classList.toggle("active");
+    if (headerSearchRow.classList.contains("active")) {
+      // 少し遅らせてフォーカス
+      setTimeout(() => searchInput.focus(), 50);
+    }
+  });
+
+  // マイクボタンで音声入力開始
+  searchMicBtn.addEventListener("click", () => {
+    startVoiceSearch();
+  });
+
+
+
+
+  
   // 注文タブ切り替え
   document.querySelectorAll(".order-tab").forEach(tab => {
     tab.addEventListener("click", () => {
