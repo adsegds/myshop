@@ -23,6 +23,114 @@
 }
 
 
+/* ====== 検索バーまわり（Uber風） ====== */
+
+/* 右上の🔍ボタン（スマホ用） */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-search-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #222;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* PC用の横長検索バー */
+.header-search-desktop {
+  margin: 6px 0 4px;
+}
+
+.search-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #f3f3f3;
+  font-size: 13px;
+}
+
+.search-icon {
+  font-size: 18px;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: #111;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.voice-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #e2e2e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* スマホで検索を押したときに出る上部バー（Uberアプリっぽく白） */
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1200;
+}
+
+.search-back-btn {
+  border: none;
+  background: transparent;
+  color: #111;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* レスポンシブ制御 */
+@media (max-width: 640px) {
+  /* スマホ：横長検索バーは隠す（上の🔍だけ） */
+  .header-search-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 641px) {
+  /* PC：右上🔍ボタンとオーバーレイは使わない */
+  .header-search-icon {
+    display: none;
+  }
+  .search-overlay {
+    display: none !important;
+  }
+}
 
     
     
@@ -140,6 +248,9 @@
       color: #fff;
       font-weight: 600;
     }
+
+
+    
 
     /* ========= メイン ========= */
     .app-main {
