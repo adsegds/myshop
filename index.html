@@ -1426,6 +1426,78 @@ function renderItems() {
 }
 
 
+
+
+
+
+  // ================= 検索処理 =================
+  function runSearch() {
+    const q = (searchInput.value || "").trim();
+    if (!q) {
+      // 何も入力してないとき → すべて表示（ホーム）
+      currentCategory = "all";
+      document.querySelectorAll(".category-tab").forEach(tab => {
+        tab.classList.toggle(
+          "active",
+          tab.getAttribute("data-category") === "all"
+        );
+      });
+      showHomeView();
+      return;
+    }
+
+    const lower = q.toLowerCase();
+
+    // 商品名に部分一致するものを検索
+    const hits = ITEMS.filter(item =>
+      (item.name || "").toLowerCase().includes(lower)
+    );
+
+    // 一覧表示モードへ
+    homeView.classList.add("hidden");
+    listView.classList.remove("hidden");
+    cartView.classList.add("hidden");
+    completeView.classList.add("hidden");
+    ordersView.classList.add("hidden");
+    storeView.classList.add("hidden");
+
+    itemListEl.classList.remove("grouped");
+    itemListEl.innerHTML = "";
+
+    if (!hits.length) {
+      itemListEl.innerHTML = `<p class="order-empty-text">「${q}」に一致する商品は見つかりませんでした。</p>`;
+      return;
+    }
+
+    hits.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "home-item-card";
+      card.innerHTML = `
+        <div class="home-thumb-wrap">
+          <img src="${item.imageUrl}" alt="${item.name}">
+          <button class="home-plus-btn" data-id="${item.id}">＋</button>
+        </div>
+        <div class="home-item-info">
+          <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
+          <div class="home-item-name">${item.name}</div>
+        </div>
+      `;
+      itemListEl.appendChild(card);
+    });
+
+    // ＋ボタン → カートに追加
+    itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        addToCart(id);
+      });
+    });
+  }
+
+
+
+
+  
   // ================= カート処理 =================
   function addToCart(id) {
     const target = ITEMS.find(i => i.id === id);
