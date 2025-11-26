@@ -771,98 +771,6 @@
 
 
 
-
-
-
-/* ========= YouTube風 検索バー ========= */
-
-/* 検索バー全体の行 */
-.header-search-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-/* 黒いカプセルの中身 */
-.header-search {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: #111;
-  border-radius: 999px;
-  padding: 4px 8px;
-}
-
-/* テキスト入力 */
-.search-input {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #fff;
-  font-size: 13px;
-  padding: 4px 6px;
-}
-
-.search-input::placeholder {
-  color: #888;
-}
-
-/* 検索アイコンボタン・マイクボタン共通 */
-.search-icon-btn,
-.search-mic-btn,
-.header-icon-btn {
-  border: none;
-  background: transparent;
-  color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-/* 検索アイコンボタンは少しグレー背景にしてもOK */
-.search-icon-btn {
-  background: rgba(255,255,255,0.06);
-}
-
-/* ヘッダー右上の虫眼鏡（スマホ用） */
-.header-icon-btn {
-  color: #fff;
-  background: #2b2b2b;
-}
-
-/* PCサイズでは検索バーを常に表示・虫眼鏡は非表示 */
-@media (min-width: 641px) {
-  .header-search-row {
-    display: flex;
-  }
-  #searchIconBtn {
-    display: none;
-  }
-}
-
-/* スマホサイズではデフォルト隠す → アイコンクリックで出す */
-@media (max-width: 640px) {
-  .header-search-row {
-    display: none;
-  }
-  .header-search-row.active {
-    display: flex;
-  }
-}
-
-
-
-
-
-
-    
     
 
     
@@ -873,51 +781,25 @@
 
   <!-- ヘッダー -->
   <header class="app-header">
-  <div class="header-row-top">
-    <div class="header-brand">
-      <div class="header-title">夜食取り置き</div>
-      <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
+    <div class="header-row-top">
+      <div class="header-brand">
+        <div class="header-title">夜食取り置き</div>
+        <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
+      </div>
+      <button class="cart-button cart-fixed" id="cartButton">
+  カート
+  <span class="cart-count-badge" id="cartCount">0</span>
+</button>
+
     </div>
-
-    <!-- スマホ用：右上の検索アイコン -->
-    <button class="header-icon-btn" id="searchIconBtn" aria-label="検索">
-      🔍
-    </button>
-
-    <!-- カートボタン（今まで通り） -->
-    <button class="cart-button cart-fixed" id="cartButton">
-      カート
-      <span class="cart-count-badge" id="cartCount">0</span>
-    </button>
-  </div>
-
-  <!-- YouTube風 検索バー -->
-  <div class="header-search-row" id="headerSearchRow">
-    <div class="header-search">
-      <input
-        type="text"
-        id="searchInput"
-        class="search-input"
-        placeholder="商品名で検索"
-      >
-      <button class="search-icon-btn" id="searchBtn" aria-label="検索">
-        🔍
-      </button>
-      <button class="search-mic-btn" id="searchMicBtn" aria-label="音声入力">
-        🎤
-      </button>
+    <div class="header-location-bar">
+      <div class="location-pill">
+        <span class="location-dot"></span>
+        南部町（いまいる場所）で受け取り
+      </div>
+      <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
     </div>
-  </div>
-
-  <div class="header-location-bar">
-    <div class="location-pill">
-      <span class="location-dot"></span>
-      南部町（いまいる場所）で受け取り
-    </div>
-    <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
-  </div>
-</header>
-
+  </header>
 
   <!-- カテゴリチップ -->
   <div class="category-bar-wrap">
@@ -1206,16 +1088,6 @@ function groupByCategory2(items) {
   const cartBarLine1    = document.getElementById("cartBarLine1");
   const cartBarInner    = document.getElementById("cartBarInner");
 
-
-  // ★ ここから追加：検索バー関係
-  const headerSearchRow = document.getElementById("headerSearchRow");
-  const searchIconBtn   = document.getElementById("searchIconBtn");
-  const searchInput     = document.getElementById("searchInput");
-  const searchBtn       = document.getElementById("searchBtn");
-  const searchMicBtn    = document.getElementById("searchMicBtn");
-
-
-  
   let currentCategory = "all";
   let cart = [];
 
@@ -1426,109 +1298,6 @@ function renderItems() {
 }
 
 
-
-
-
-
-  // ================= 検索処理 =================
-  function runSearch() {
-    const q = (searchInput.value || "").trim();
-    if (!q) {
-      // 何も入力してないとき → すべて表示（ホーム）
-      currentCategory = "all";
-      document.querySelectorAll(".category-tab").forEach(tab => {
-        tab.classList.toggle(
-          "active",
-          tab.getAttribute("data-category") === "all"
-        );
-      });
-      showHomeView();
-      return;
-    }
-
-    const lower = q.toLowerCase();
-
-    // 商品名に部分一致するものを検索
-    const hits = ITEMS.filter(item =>
-      (item.name || "").toLowerCase().includes(lower)
-    );
-
-    // 一覧表示モードへ
-    homeView.classList.add("hidden");
-    listView.classList.remove("hidden");
-    cartView.classList.add("hidden");
-    completeView.classList.add("hidden");
-    ordersView.classList.add("hidden");
-    storeView.classList.add("hidden");
-
-    itemListEl.classList.remove("grouped");
-    itemListEl.innerHTML = "";
-
-    if (!hits.length) {
-      itemListEl.innerHTML = `<p class="order-empty-text">「${q}」に一致する商品は見つかりませんでした。</p>`;
-      return;
-    }
-
-    hits.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "home-item-card";
-      card.innerHTML = `
-        <div class="home-thumb-wrap">
-          <img src="${item.imageUrl}" alt="${item.name}">
-          <button class="home-plus-btn" data-id="${item.id}">＋</button>
-        </div>
-        <div class="home-item-info">
-          <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
-          <div class="home-item-name">${item.name}</div>
-        </div>
-      `;
-      itemListEl.appendChild(card);
-    });
-
-    // ＋ボタン → カートに追加
-    itemListEl.querySelectorAll(".home-plus-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-id");
-        addToCart(id);
-      });
-    });
-  }
-
-
-
-  // ================= 音声入力 =================
-  function startVoiceSearch() {
-    const SpeechRecognition =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      alert("このブラウザは音声入力に対応していません。");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "ja-JP";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onresult = (event) => {
-      const text = event.results[0][0].transcript;
-      searchInput.value = text;
-      runSearch();
-    };
-
-    recognition.onerror = (e) => {
-      console.error("音声入力エラー:", e);
-      alert("音声入力に失敗しました。もう一度お試しください。");
-    };
-
-    recognition.start();
-  }
-
-  
-
-
-  
   // ================= カート処理 =================
   function addToCart(id) {
     const target = ITEMS.find(i => i.id === id);
@@ -1755,40 +1524,6 @@ async function handleOrder() {
   cartButton.addEventListener("click", showCartView);
   cartBarInner.addEventListener("click", showCartView);
 
-
-
-
-// ★ ここから追加：検索バーイベント ★
-
-  // PC：検索ボタン or Enter で検索
-  searchBtn.addEventListener("click", () => {
-    runSearch();
-  });
-
-  searchInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      runSearch();
-    }
-  });
-
-  // スマホ：右上の虫眼鏡で開閉
-  searchIconBtn.addEventListener("click", () => {
-    headerSearchRow.classList.toggle("active");
-    if (headerSearchRow.classList.contains("active")) {
-      // 少し遅らせてフォーカス
-      setTimeout(() => searchInput.focus(), 50);
-    }
-  });
-
-  // マイクボタンで音声入力開始
-  searchMicBtn.addEventListener("click", () => {
-    startVoiceSearch();
-  });
-
-
-
-
-  
   // 注文タブ切り替え
   document.querySelectorAll(".order-tab").forEach(tab => {
     tab.addEventListener("click", () => {
