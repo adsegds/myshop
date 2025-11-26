@@ -767,6 +767,65 @@
 
 
 
+
+  /* ===== ここからPC用レイアウト調整 ===== */
+  @media (min-width: 768px) {
+    /* 画面幅が広いときはコンテナを広げる */
+    .app-shell {
+      max-width: 960px;
+    }
+
+    /* 余白をちょっと広めに */
+    .app-main {
+      padding: 20px 24px 180px;
+    }
+
+    /* 商品カード：PCでは3列〜4列にする */
+    .item-list {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* 飲料タブで使ってる縦並びのグリッドもPCは4列 */
+    .front-category-row {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* ホームの横スクロール棚：PCでは折り返しで並べる */
+    .home-scroll {
+      overflow-x: visible;
+      flex-wrap: wrap;
+      padding-bottom: 0;
+      margin-right: 0;
+      padding-right: 0;
+    }
+
+    /* 横棚のカード幅をPC用に少し広くする */
+    .home-scroll .home-item-card {
+      flex: 0 0 calc(25% - 12px); /* だいたい4列 */
+    }
+
+    /* 店舗マップはPCだと少し高さアップ */
+    .store-map iframe {
+      height: 320px;
+    }
+
+    /* PCだとフッターをちょっとスッキリさせる（お好み） */
+    .app-footer {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* 下の黒いカートバーもPCでは少し上げる */
+    .cart-bar {
+      bottom: 24px;
+    }
+  }
+
+
+
+    
     
 
     
