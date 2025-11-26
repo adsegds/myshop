@@ -1717,6 +1717,50 @@ async function handleOrder() {
 
 
   // ================= イベント =================
+   // ===== ハンバーガーメニュー開閉 =====
+  function openSideMenu() {
+    sideMenu.classList.remove("hidden");
+  }
+  function closeSideMenu() {
+    sideMenu.classList.add("hidden");
+  }
+
+  menuBtn.addEventListener("click", openSideMenu);
+  sideMenuClose.addEventListener("click", closeSideMenu);
+
+  // 背景をタップしたら閉じる
+  sideMenu.addEventListener("click", (e) => {
+    if (e.target === sideMenu) {
+      closeSideMenu();
+    }
+  });
+
+  // サイドメニュー内のナビボタン
+  sideMenu.querySelectorAll(".side-menu-nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const menu = btn.getAttribute("data-menu");
+
+      if (menu === "home") {
+        currentCategory = "all";
+        document.querySelectorAll(".category-tab").forEach(tab => {
+          tab.classList.toggle("active", tab.getAttribute("data-category") === "all");
+        });
+        showHomeView();
+      } else if (menu === "list") {
+        if (currentCategory === "all") {
+          showHomeView();
+        } else {
+          showListView();
+        }
+      } else if (menu === "store") {
+        showStoreView();
+      } else if (menu === "orders") {
+        showOrdersView();
+      }
+
+      closeSideMenu();
+    });
+  });
   // カテゴリタブ
   categoryTabsEl.addEventListener("click", (e) => {
     if (!e.target.classList.contains("category-tab")) return;
