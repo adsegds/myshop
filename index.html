@@ -1566,6 +1566,40 @@ async function handleOrder() {
     handleOrder();
   });
 
+
+
+// ==== 商品の category1Name からタブを自動生成 ====
+function renderCategoryTabsFromItems() {
+  // 「すべて」以外のタブを一旦削除
+  const tabs = categoryTabsEl.querySelectorAll(".category-tab:not([data-category='all'])");
+  tabs.forEach(el => el.remove());
+
+  // ITEMS から category1Name の一覧を作る
+  const namesSet = new Set();
+  ITEMS.forEach(item => {
+    if (item.category1Name) {
+      namesSet.add(item.category1Name);
+    }
+  });
+
+  // ここで並び順を少し整えたい場合は配列にして並べ替えも可能
+  const names = Array.from(namesSet);
+  // 例：よく使う順にソートしたければここで並び替え
+
+  // 「すべて」の右側にボタンを追加
+  names.forEach(name => {
+    const btn = document.createElement("button");
+    btn.className = "category-tab";
+    btn.dataset.category = name;   // ← category1Name をそのままキーにする
+    btn.textContent = name;        // 表示名もそのまま
+
+    categoryTabsEl.appendChild(btn);
+  });
+}
+
+
+
+  
   // ================= 初期処理：Firestore から商品読み込み =================
   loadItemsFromFirestore();
 </script>
