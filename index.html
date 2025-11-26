@@ -873,25 +873,51 @@
 
   <!-- ヘッダー -->
   <header class="app-header">
-    <div class="header-row-top">
-      <div class="header-brand">
-        <div class="header-title">夜食取り置き</div>
-        <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
-      </div>
-      <button class="cart-button cart-fixed" id="cartButton">
-  カート
-  <span class="cart-count-badge" id="cartCount">0</span>
-</button>
+  <div class="header-row-top">
+    <div class="header-brand">
+      <div class="header-title">夜食取り置き</div>
+      <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
+    </div>
 
+    <!-- スマホ用：右上の検索アイコン -->
+    <button class="header-icon-btn" id="searchIconBtn" aria-label="検索">
+      🔍
+    </button>
+
+    <!-- カートボタン（今まで通り） -->
+    <button class="cart-button cart-fixed" id="cartButton">
+      カート
+      <span class="cart-count-badge" id="cartCount">0</span>
+    </button>
+  </div>
+
+  <!-- YouTube風 検索バー -->
+  <div class="header-search-row" id="headerSearchRow">
+    <div class="header-search">
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="商品名で検索"
+      >
+      <button class="search-icon-btn" id="searchBtn" aria-label="検索">
+        🔍
+      </button>
+      <button class="search-mic-btn" id="searchMicBtn" aria-label="音声入力">
+        🎤
+      </button>
     </div>
-    <div class="header-location-bar">
-      <div class="location-pill">
-        <span class="location-dot"></span>
-        南部町（いまいる場所）で受け取り
-      </div>
-      <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
+  </div>
+
+  <div class="header-location-bar">
+    <div class="location-pill">
+      <span class="location-dot"></span>
+      南部町（いまいる場所）で受け取り
     </div>
-  </header>
+    <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
+  </div>
+</header>
+
 
   <!-- カテゴリチップ -->
   <div class="category-bar-wrap">
