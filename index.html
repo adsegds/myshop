@@ -881,25 +881,42 @@
 
   <!-- ヘッダー -->
   <header class="app-header">
-    <div class="header-row-top">
-      <div class="header-brand">
-        <div class="header-title">夜食取り置き</div>
-        <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
-      </div>
-      <button class="cart-button cart-fixed" id="cartButton">
-  カート
-  <span class="cart-count-badge" id="cartCount">0</span>
-</button>
+    <div class="header-inner">
+      <!-- 上段：メニュー / ロゴ / カート -->
+      <div class="header-row-top">
+        <div class="header-left">
+          <button class="header-menu-btn" type="button">☰</button>
+          <div class="header-logo-text">夜食取り置き</div>
+        </div>
 
-    </div>
-    <div class="header-location-bar">
-      <div class="location-pill">
-        <span class="location-dot"></span>
-        南部町（いまいる場所）で受け取り
+        <div class="header-right">
+          <div class="header-account">南部の里店</div>
+          <button class="cart-button cart-fixed" id="cartButton">
+            🛒 カート
+            <span class="cart-count-badge" id="cartCount">0</span>
+          </button>
+        </div>
       </div>
-      <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
+
+      <!-- 検索バー（ダミーでOK） -->
+      <div class="header-search">
+        <div class="header-search-box">
+          <span class="header-search-icon">🔍</span>
+          <span class="header-search-placeholder">夜食メニューを検索</span>
+        </div>
+      </div>
+
+      <!-- お届け先バー（場所表示） -->
+      <div class="header-location-bar">
+        <div class="location-pill">
+          <span class="location-dot"></span>
+          南部町（いまいる場所）で受け取り
+        </div>
+        <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
+      </div>
     </div>
   </header>
+
 
   <!-- カテゴリチップ -->
   <div class="category-bar-wrap">
