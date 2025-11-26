@@ -1206,6 +1206,16 @@ function groupByCategory2(items) {
   const cartBarLine1    = document.getElementById("cartBarLine1");
   const cartBarInner    = document.getElementById("cartBarInner");
 
+
+  // ★ ここから追加：検索バー関係
+  const headerSearchRow = document.getElementById("headerSearchRow");
+  const searchIconBtn   = document.getElementById("searchIconBtn");
+  const searchInput     = document.getElementById("searchInput");
+  const searchBtn       = document.getElementById("searchBtn");
+  const searchMicBtn    = document.getElementById("searchMicBtn");
+
+
+  
   let currentCategory = "all";
   let cart = [];
 
