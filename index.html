@@ -86,40 +86,26 @@
     }
 
     .cart-button {
-  border: none;
-  background: transparent;   /* 背景なし */
-  padding: 0;
-  cursor: pointer;
-  position: relative;
-}
-
-
-.cart-icon {
-  font-size: 22px;        /* カートアイコンの大きさ */
-  line-height: 1;
-  color: #111;            /* 黒っぽい色 */
-  display: inline-block;
-}
-
-    
-
+      border: none;
+      background: #111;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+    }
     .cart-count-badge {
-  position: absolute;
-  top: -4px;
-  right: -6px;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 4px;
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 700;
-  background: #2e7d32; /* 緑（スクショっぽい色） */
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      font-size: 11px;
+      background: #06c167;
+      color: #111;
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-weight: 700;
+    }
 
     /* ========= カテゴリチップ ========= */
     .category-bar-wrap {
@@ -750,11 +736,15 @@
 /* カートボタンを画面右上に固定 */
 .cart-fixed {
   position: fixed;
-  top: 10px;
-  right: 16px;
-  z-index: 1000;
-}
+  top: 10px;      /* 画面上からの距離 */
+  right: 16px;    /* 画面右からの距離 */
+  z-index: 1000;  /* ほかの要素より手前に出す */
 
+  /* ここから下は見た目の調整（今のデザインに合わせていじってOK） */
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
 
 
 
@@ -796,8 +786,8 @@
         <div class="header-title">夜食取り置き</div>
         <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
       </div>
-     <button class="cart-button cart-fixed" id="cartButton" aria-label="カート">
-  <span class="cart-icon">🛒</span>
+      <button class="cart-button cart-fixed" id="cartButton">
+  カート
   <span class="cart-count-badge" id="cartCount">0</span>
 </button>
 
