@@ -1684,25 +1684,26 @@ async function handleOrder() {
   cartButton.addEventListener("click", showCartView);
   cartBarInner.addEventListener("click", showCartView);
 
-  // 注文タブ切り替え
-  document.querySelectorAll(".order-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".order-tab").forEach(t =>
-        t.classList.remove("active")
-      );
-      tab.addEventListener("click", () => {});
-      tab.classList.add("active");
+ 
+ // 注文タブ切り替え
+document.querySelectorAll(".order-tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".order-tab").forEach(t =>
+      t.classList.remove("active")
+    );
+    tab.classList.add("active");
 
-      const tabId = tab.getAttribute("data-tab");
-      if (tabId === "items") {
-        orderItemsPanel.classList.remove("hidden");
-        orderHistoryPanel.classList.add("hidden");
-      } else {
-        orderItemsPanel.classList.add("hidden");
-        orderHistoryPanel.classList.remove("hidden");
-      }
-    });
+    const tabId = tab.getAttribute("data-tab");
+    if (tabId === "items") {
+      orderItemsPanel.classList.remove("hidden");
+      orderHistoryPanel.classList.add("hidden");
+    } else {
+      orderItemsPanel.classList.add("hidden");
+      orderHistoryPanel.classList.remove("hidden");
+    }
   });
+});
+
 
 
   // ===== スマホ用 検索アイコン → 検索バー表示 =====
