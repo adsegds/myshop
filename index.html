@@ -1119,7 +1119,7 @@ function renderHomeSections() {
     section.innerHTML = `
       <div class="home-section-header">
         <h3 class="home-section-title">${cat.label}</h3>
-        <button class="home-section-arrow" data-category="${cat.id}">➜</button>
+        <button class="home-section-arrow" data-category="${cat.label}">➜</button>
       </div>
       <div class="home-scroll">
         ${itemsForCat.map(item => `
