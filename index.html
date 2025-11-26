@@ -1082,23 +1082,27 @@ function groupByCategory2(items) {
 
   // ============ Firestore から items を読む ============
   async function loadItemsFromFirestore() {
-    try {
-      const snap = await getDocs(collection(db, "items"));
-      ITEMS = snap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+  try {
+    const snap = await getDocs(collection(db, "items"));
+    ITEMS = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
-      // データを取ってきたあとに UI を描画
-      renderHomeSections();
-      renderItems();
-      showHomeView();
-      updateCartView();
-    } catch (err) {
-      console.error("Firestore 読み込みエラー:", err);
-      alert("商品データの読み込みに失敗しました。時間をおいて再度お試しください。");
-    }
+    // 商品を読み込んだら、category1Name からタブを作成
+    renderCategoryTabsFromItems();
+
+    // そのあとホームの棚などを描画
+    renderHomeSections();
+    renderItems();
+    showHomeView();
+    updateCartView();
+  } catch (err) {
+    console.error("Firestore 読み込みエラー:", err);
+    alert("商品データの読み込みに失敗しました。時間をおいて再度お試しください。");
   }
+}
+
 
  // ================= ホーム（横スクロール棚） =================
 function renderHomeSections() {
