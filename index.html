@@ -1496,6 +1496,37 @@ function renderItems() {
 
 
 
+  // ================= 音声入力 =================
+  function startVoiceSearch() {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("このブラウザは音声入力に対応していません。");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "ja-JP";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const text = event.results[0][0].transcript;
+      searchInput.value = text;
+      runSearch();
+    };
+
+    recognition.onerror = (e) => {
+      console.error("音声入力エラー:", e);
+      alert("音声入力に失敗しました。もう一度お試しください。");
+    };
+
+    recognition.start();
+  }
+
+  
+
 
   
   // ================= カート処理 =================
