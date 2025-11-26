@@ -33,37 +33,131 @@
     
     
     /* ========= Uber風ヘッダー ========= */
-    .app-header {
-      background: #ffffff;
-      padding: 10px 14px 8px;
-      border-bottom: 1px solid #eee;
-    }
-    .header-row-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .header-brand {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .header-title {
-      font-size: 18px;
-      font-weight: 700;
-    }
-    .header-sub {
-      font-size: 11px;
-      color: #666;
-    }
-    .header-chip {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid #eee;
-      color: #333;
-    }
+    /* ========= Amazonモバイル風ヘッダー ========= */
+.app-header {
+  width: 100%;
+  background: #0f1111;       /* Amazonっぽい濃紺 */
+  color: #fff;
+  padding: 6px 0 8px;
+}
+
+/* 中身をスマホ幅で中央寄せ */
+.header-inner {
+  max-width: 480px;          /* スマホ前提なので 480px 固定でOK */
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* 上段：ハンバーガー + ロゴ + カート */
+.header-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-menu-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: none;
+  background: #131921;
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo-text {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* 右側（アカウント・カート） */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-account {
+  font-size: 11px;
+}
+
+/* カートボタンは固定じゃなくヘッダー右に置く */
+.cart-fixed {
+  position: static;
+  top: auto;
+  right: auto;
+  z-index: auto;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+/* 検索バー */
+.header-search {
+  margin-bottom: 6px;
+}
+
+.header-search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+.header-search-icon {
+  font-size: 14px;
+}
+
+.header-search-placeholder {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 下の「場所」バーは Amazon のお届け先風に色だけ調整 */
+.header-location-bar {
+  font-size: 11px;
+}
+
+.location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #232f3e;   /* 濃紺 */
+  font-size: 11px;
+  color: #fff;
+}
+
+.location-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #ffd814;   /* Amazonっぽい黄色 */
+}
+
+.header-note {
+  font-size: 10px;
+  color: #ccc;
+  margin-top: 2px;
+}
+
 
     /* 疑似「配達先」バー */
     .header-location-bar {
