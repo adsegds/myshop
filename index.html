@@ -892,15 +892,50 @@
 
   <!-- ヘッダー -->
   <header class="app-header">
-    <div class="header-row-top">
-      <div class="header-brand">
-        <div class="header-title">夜食取り置き</div>
-        <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
-      </div>
+  <div class="header-row-top">
+    <div class="header-brand">
+      <div class="header-title">夜食取り置き</div>
+      <div class="header-sub">ローソン 南部の里店 ・ 店頭受け取り</div>
+    </div>
+
+    <!-- 右側：検索アイコン＋カート -->
+    <div class="header-actions">
+      <!-- スマホ用：丸い🔍ボタン -->
+      <button class="header-search-icon" id="headerSearchIcon">
+        🔍
+      </button>
+
+      <!-- カート（今まで通り固定表示） -->
       <button class="cart-button cart-fixed" id="cartButton">
-  カート
-  <span class="cart-count-badge" id="cartCount">0</span>
-</button>
+        カート
+        <span class="cart-count-badge" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- PC用：Uber風 横長検索バー -->
+  <div class="header-search-desktop">
+    <div class="search-pill">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        id="searchInputDesktop"
+        class="search-input"
+        placeholder="メニューを検索"
+      >
+      <button type="button" class="voice-btn">🎤</button>
+    </div>
+  </div>
+
+  <div class="header-location-bar">
+    <div class="location-pill">
+      <span class="location-dot"></span>
+      南部町（いまいる場所）で受け取り
+    </div>
+    <div class="header-note">※配達はなく、店頭での受け取り専用です</div>
+  </div>
+</header>
+
 
     </div>
     <div class="header-location-bar">
