@@ -1522,22 +1522,23 @@ async function handleOrder() {
 
   // 注文タブ切り替え
   document.querySelectorAll(".order-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".order-tab").forEach(t =>
-        t.classList.remove("active")
-      );
-      tab.classList.add("active");
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".order-tab").forEach(t =>
+      t.classList.remove("active")
+    );
+    tab.classList.add("active");
 
-      const tabId = tab.getAttribute("data-tab");
-      if (tabId === "items") {
-        orderItemsPanel.classList.remove("hidden");
-        orderHistoryPanel.classList.add("hidden");
-      } else {
-        orderItemsPanel.classList.add("hidden");
-        orderHistoryPanel.classList.remove("hidden");
-      }
-    });
+    const tabId = tab.getAttribute("data-tab");
+    if (tabId === "items") {
+      orderItemsPanel.classList.remove("hidden");
+      orderHistoryPanel.classList.add("hidden");
+    } else {
+      orderItemsPanel.classList.add("hidden");
+      orderHistoryPanel.classList.remove("hidden");
+    }
   });
+});
+
 
   // 「注文を開始する」ボタン → メニューへ戻す
   document.getElementById("startOrderBtn").addEventListener("click", () => {
