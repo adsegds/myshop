@@ -1231,31 +1231,20 @@ function renderDrinkList() {
   
   // ================= カテゴリ別 縦一覧 =================
 function renderItems() {
-  // デフォルトは「グリッド表示」に戻す
+  // デフォルトはグリッド表示
   itemListEl.classList.remove("grouped");
   itemListEl.innerHTML = "";
 
-  // ★飲料タブだけは「カテゴリ2ごと」に分けて表示
-  if (currentCategory === "drink") {
+  // 「飲料」だけカテゴリ2ごとのセクション表示にする
+  if (currentCategory === "飲料") {
     renderDrinkList();
     return;
   }
 
-  // currentCategory → category1Name の対応表
-  let targetCategory1Name = null;
-  if (currentCategory === "hotsnack") {
-    targetCategory1Name = "ホットスナック";
-  } else if (currentCategory === "bread") {
-    targetCategory1Name = "パン";
-  } else if (currentCategory === "limited") {
-    targetCategory1Name = "取り置き限定";
-  }
-  // ※ 必要に応じてここに増やしていけばOK
-
+  // currentCategory には「ホットスナック」「弁当」などの category1Name が入ってる想定
   const filtered = ITEMS.filter(item => {
-    if (currentCategory === "all") return true;
-    if (!targetCategory1Name) return true; // 念のため
-    return item.category1Name === targetCategory1Name;
+    if (currentCategory === "all") return true;           // 念のため
+    return item.category1Name === currentCategory;
   });
 
   if (!filtered.length) {
@@ -1266,19 +1255,16 @@ function renderItems() {
   filtered.forEach(item => {
     const card = document.createElement("div");
     card.className = "home-item-card";
-
     card.innerHTML = `
-  <div class="home-thumb-wrap">
-    <img src="${item.imageUrl}" alt="${item.name}">
-    <button class="home-plus-btn" data-id="${item.id}">＋</button>
-  </div>
-  <div class="home-item-info">
-    <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
-    <div class="home-item-name">${item.name}</div>
-  </div>
-`;
-
-
+      <div class="home-thumb-wrap">
+        <img src="${item.imageUrl}" alt="${item.name}">
+        <button class="home-plus-btn" data-id="${item.id}">＋</button>
+      </div>
+      <div class="home-item-info">
+        <div class="home-item-price">¥${(item.price ?? 0).toLocaleString()}</div>
+        <div class="home-item-name">${item.name}</div>
+      </div>
+    `;
     itemListEl.appendChild(card);
   });
 
@@ -1289,6 +1275,7 @@ function renderItems() {
     });
   });
 }
+
 
 
   // ================= カート処理 =================
