@@ -1718,6 +1718,20 @@ async function handleOrder() {
     });
   });
 
+
+  // ===== スマホ用 検索アイコン → 検索バー表示 =====
+  headerSearchIcon?.addEventListener("click", () => {
+    searchOverlay?.classList.remove("hidden");
+    searchInputMobile?.focus();
+  });
+
+  // ← ボタンで閉じる
+  searchBackBtn?.addEventListener("click", () => {
+    searchOverlay?.classList.add("hidden");
+  });
+
+
+  
   // 「注文を開始する」ボタン → メニューへ戻す
   document.getElementById("startOrderBtn").addEventListener("click", () => {
     currentCategory = "all";
